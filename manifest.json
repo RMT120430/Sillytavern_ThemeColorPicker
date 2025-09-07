@@ -1,5 +1,5 @@
 {
-  "display_name": "Theme Color Picker Extension",
+  "display_name": "Sillytavern_Theme_Color_Picker",
   "loading_order": 1,
   "js": "index.js",
   "css": "style.css",
@@ -10,3 +10,4 @@
   "minimum_client_version": "1.0.0"
 
 }
+
