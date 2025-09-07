@@ -1,5 +1,5 @@
 {
-  "display_name": "Theme Color Picker",
+  "display_name": "Sillytavern-ThemeColorPicker",
   "loading_order": 5,
   "requires": [],
   "optional": [],
@@ -10,3 +10,4 @@
   "homePage": "https://github.com/RMT120430/Sillytavern_ThemeColorPicker",
   "auto_update": false
 }
+
