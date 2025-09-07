@@ -1,13 +1,12 @@
-// Theme Color Picker Extension for SillyTavern
+// SillyTavern Theme Color Picker Extension
 console.log('Theme Color Picker Extension: Starting initialization');
 
-// Extension initialization
 jQuery(async () => {
     'use strict';
     
     console.log('Theme Color Picker Extension: DOM ready');
     
-    // Check if EyeDropper API is supported
+    // 檢查 EyeDropper API 支援
     if (!window.EyeDropper) {
         console.warn('EyeDropper API not supported in this browser');
         if (typeof toastr !== 'undefined') {
@@ -17,286 +16,431 @@ jQuery(async () => {
     }
     
     let isPickingColor = false;
+    let activeButton = null;
     
-    // Function to convert hex to RGB for setting CSS variables
-    function hexToRgb(hex) {
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
-    }
+    // 顏色格式轉換工具
+    const ColorUtils = {
+        hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        },
+        
+        rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        },
+        
+        parseRgbString(rgbString) {
+            const match = rgbString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+            return match ? {
+                r: parseInt(match[1]),
+                g: parseInt(match[2]),
+                b: parseInt(match[3])
+            } : null;
+        },
+        
+        toHex(color) {
+            if (color.startsWith('#')) return color;
+            if (color.startsWith('rgb')) {
+                const rgb = this.parseRgbString(color);
+                return rgb ? this.rgbToHex(rgb.r, rgb.g, rgb.b) : color;
+            }
+            return color;
+        }
+    };
     
-    // Function to update SillyTavern theme color
-    function updateThemeColor(colorDiv, newColor) {
-        // Update the visual color display
-        colorDiv.style.backgroundColor = newColor;
+    // 更新主題顏色
+    function updateThemeColor(colorElement, newColor) {
+        console.log('Updating theme color:', newColor, 'for element:', colorElement);
         
-        // Find and update associated input if it exists
-        const input = colorDiv.closest('.setting_block')?.querySelector('input[type="color"]') ||
-                     colorDiv.querySelector('input[type="color"]') ||
-                     document.querySelector(`input[type="color"][value="${colorDiv.style.backgroundColor}"]`);
-        
-        if (input) {
-            input.value = newColor;
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            input.dispatchEvent(new Event('change', { bubbles: true }));
+        // 直接更新顏色顯示元素
+        if (colorElement.style) {
+            colorElement.style.backgroundColor = newColor;
         }
         
-        // Try to identify which theme color this is and update CSS variables
-        const settingBlock = colorDiv.closest('.setting_block');
-        if (settingBlock) {
-            const label = settingBlock.querySelector('label, .setting_label')?.textContent?.trim();
-            updateCSSVariable(label, newColor);
+        // 尋找關聯的隱藏 input 或設定值
+        const colorName = getColorNameFromElement(colorElement);
+        if (colorName) {
+            updateThemeColorBySetting(colorName, newColor);
         }
         
-        // Force theme update
+        // 觸發 SillyTavern 設定保存
         setTimeout(() => {
             if (typeof saveSettingsDebounced === 'function') {
                 saveSettingsDebounced();
+            } else if (typeof saveSettings === 'function') {
+                saveSettings();
             }
+            
+            // 強制重新應用主題
+            if (typeof applyTheme === 'function') {
+                applyTheme();
+            }
+            
+            // 觸發自定義事件
+            $(document).trigger('themeColorChanged', [colorName, newColor]);
         }, 100);
     }
     
-    // Function to update CSS variables based on color type
-    function updateCSSVariable(labelText, color) {
-        const root = document.documentElement;
-        const rgb = hexToRgb(color);
+    // 從元素獲取顏色名稱
+    function getColorNameFromElement(element) {
+        // 查找父級容器中的文字標籤
+        const container = element.closest('.color-picker-block, .inline-drawer, .user-settings-block');
+        if (!container) return null;
         
-        if (!rgb) return;
+        // 尋找文字標籤
+        const textNodes = container.querySelectorAll('*');
+        for (let node of textNodes) {
+            const text = node.textContent?.trim();
+            if (text && colorNameMapping[text]) {
+                return text;
+            }
+        }
         
-        const colorMapping = {
-            'Main Text': 'SmartThemeMainTextColor',
-            'Italics Text': 'SmartThemeItalicsColor',
-            'Underlined Text': 'SmartThemeUnderlinedColor',
-            'Quote Text': 'SmartThemeQuoteColor',
-            'Text Shadow': 'SmartThemeTextShadowColor',
-            'Chat Background': 'SmartThemeChatBackgroundColor',
-            'UI Background': 'SmartThemeUIBackgroundColor',
-            'UI Border': 'SmartThemeUIBorderColor',
-            'User Message': 'SmartThemeUserMessageColor',
-            'AI Message': 'SmartThemeBotMessageColor'
+        // 從 DOM 結構推斷
+        const allColorElements = container.querySelectorAll('[style*="background-color"]');
+        const index = Array.from(allColorElements).indexOf(element);
+        const colorNames = [
+            'Main Text', 'Italics Text', 'Underlined Text', 'Quote Text',
+            'Text Shadow', 'Chat Background', 'UI Background', 'UI Border',
+            'User Message', 'AI Message'
+        ];
+        
+        return colorNames[index] || null;
+    }
+    
+    // 顏色名稱對應設定
+    const colorNameMapping = {
+        'Main Text': 'main_text_color',
+        'Italics Text': 'italics_text_color', 
+        'Underlined Text': 'underlined_text_color',
+        'Quote Text': 'quote_text_color',
+        'Text Shadow': 'text_shadow_color',
+        'Chat Background': 'chat_bg_color',
+        'UI Background': 'ui_bg_color',
+        'UI Border': 'ui_border_color',
+        'User Message': 'user_msg_color',
+        'AI Message': 'ai_msg_color'
+    };
+    
+    // 根據設定名稱更新顏色
+    function updateThemeColorBySetting(colorName, newColor) {
+        const settingKey = colorNameMapping[colorName];
+        if (!settingKey) return;
+        
+        // 更新全域設定（如果存在）
+        if (typeof power_user !== 'undefined' && power_user.themes) {
+            const currentTheme = power_user.themes[power_user.theme] || {};
+            currentTheme[settingKey] = newColor;
+            power_user.themes[power_user.theme] = currentTheme;
+        }
+        
+        // 更新 CSS 變數
+        const cssVarMap = {
+            'main_text_color': '--SmartThemeMainTextColor',
+            'italics_text_color': '--SmartThemeItalicsColor',
+            'underlined_text_color': '--SmartThemeUnderlinedColor',
+            'quote_text_color': '--SmartThemeQuoteColor',
+            'text_shadow_color': '--SmartThemeTextShadowColor',
+            'chat_bg_color': '--SmartThemeChatBackgroundColor',
+            'ui_bg_color': '--SmartThemeUIBackgroundColor',
+            'ui_border_color': '--SmartThemeUIBorderColor',
+            'user_msg_color': '--SmartThemeUserMessageColor',
+            'ai_msg_color': '--SmartThemeBotMessageColor'
         };
         
-        const cssVar = colorMapping[labelText];
+        const cssVar = cssVarMap[settingKey];
         if (cssVar) {
-            root.style.setProperty(`--${cssVar}`, color);
-            console.log(`Updated CSS variable --${cssVar} to ${color}`);
+            document.documentElement.style.setProperty(cssVar, newColor);
+            console.log(`Updated CSS variable ${cssVar} to ${newColor}`);
         }
     }
     
-    // Function to add color picker buttons
-    function addColorPickerButtons() {
-        console.log('Theme Color Picker: Scanning for color elements');
+    // 創建滴管按鈕
+    function createEyedropperButton(targetElement) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'eyedropper-btn';
+        button.innerHTML = '🎨';
+        button.title = '使用滴管工具選取螢幕顏色';
         
-        // Find color display elements in the Theme Colors section
-        const colorDisplays = document.querySelectorAll([
-            // Look for elements that display colors visually
-            '[style*="background-color"]:not(.color-picker-btn)',
-            '[style*="background:"]:not(.color-picker-btn)',
-            '.color-swatch',
-            '.theme-color-display',
-            // Also check for inputs in theme settings
-            '.themes_settings input[type="color"]',
-            '#themes input[type="color"]'
-        ].join(', '));
+        // 按鈕樣式
+        button.style.cssText = `
+            position: absolute !important;
+            top: 2px !important;
+            right: 2px !important;
+            width: 20px !important;
+            height: 20px !important;
+            background: rgba(0, 123, 255, 0.8) !important;
+            color: white !important;
+            border: 1px solid rgba(0, 123, 255, 1) !important;
+            border-radius: 3px !important;
+            cursor: pointer !important;
+            font-size: 10px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 1000 !important;
+            transition: all 0.2s ease !important;
+            opacity: 0.7 !important;
+        `;
         
-        console.log(`Found ${colorDisplays.length} potential color elements`);
+        // 懸停效果
+        button.addEventListener('mouseenter', () => {
+            if (!isPickingColor) {
+                button.style.opacity = '1';
+                button.style.transform = 'scale(1.1)';
+            }
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            if (!isPickingColor) {
+                button.style.opacity = '0.7';
+                button.style.transform = 'scale(1)';
+            }
+        });
+        
+        // 點擊事件
+        button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (isPickingColor) return;
+            
+            await startColorPicking(button, targetElement);
+        });
+        
+        return button;
+    }
+    
+    // 開始顏色選取
+    async function startColorPicking(button, targetElement) {
+        if (isPickingColor) return;
+        
+        try {
+            isPickingColor = true;
+            activeButton = button;
+            
+            // 更新按鈕狀態
+            button.style.background = '#ff4444';
+            button.style.borderColor = '#ff2222';
+            button.innerHTML = '⏳';
+            button.title = '點擊螢幕選取顏色... (ESC 取消)';
+            button.style.opacity = '1';
+            
+            if (typeof toastr !== 'undefined') {
+                toastr.info('請點擊螢幕選取顏色', '滴管工具已啟動');
+            }
+            
+            console.log('Starting eyedropper...');
+            
+            const eyeDropper = new EyeDropper();
+            const result = await eyeDropper.open();
+            
+            if (result && result.sRGBHex) {
+                const selectedColor = result.sRGBHex.toLowerCase();
+                console.log('Color selected:', selectedColor);
+                
+                updateThemeColor(targetElement, selectedColor);
+                
+                if (typeof toastr !== 'undefined') {
+                    toastr.success(`顏色已設定為 ${selectedColor.toUpperCase()}`);
+                }
+                
+                // 成功狀態
+                button.style.background = '#28a745';
+                button.innerHTML = '✓';
+                
+                setTimeout(() => {
+                    if (button && !isPickingColor) {
+                        resetButton(button);
+                    }
+                }, 1000);
+            }
+            
+        } catch (error) {
+            if (error.name === 'AbortError') {
+                console.log('Color picking cancelled');
+                if (typeof toastr !== 'undefined') {
+                    toastr.info('顏色選取已取消');
+                }
+            } else {
+                console.error('Color picking failed:', error);
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('選色失敗: ' + error.message);
+                }
+            }
+        } finally {
+            isPickingColor = false;
+            activeButton = null;
+            
+            if (button) {
+                setTimeout(() => resetButton(button), 500);
+            }
+        }
+    }
+    
+    // 重置按鈕狀態
+    function resetButton(button) {
+        if (button && button.parentNode) {
+            button.style.background = 'rgba(0, 123, 255, 0.8)';
+            button.style.borderColor = 'rgba(0, 123, 255, 1)';
+            button.innerHTML = '🎨';
+            button.title = '使用滴管工具選取螢幕顏色';
+            button.style.opacity = '0.7';
+            button.style.transform = 'scale(1)';
+        }
+    }
+    
+    // 添加滴管按鈕到顏色元素
+    function addEyedropperButtons() {
+        console.log('Scanning for SillyTavern color elements...');
+        
+        // 尋找主題顏色區塊
+        const themeColorSections = [
+            ...document.querySelectorAll('.color-picker-block'),
+            ...document.querySelectorAll('[class*="color-picker"]'),
+            ...document.querySelectorAll('.inline-drawer'),
+            ...document.querySelectorAll('.user-settings-block')
+        ];
         
         let buttonsAdded = 0;
         
-        colorDisplays.forEach((element, index) => {
-            // Skip if this is already a picker button or has one
-            if (element.classList.contains('color-picker-btn') || 
-                element.parentNode.querySelector('.color-picker-btn')) {
-                return;
-            }
+        themeColorSections.forEach(section => {
+            // 在每個區塊內尋找顏色顯示元素
+            const colorElements = section.querySelectorAll('[style*="background-color"]:not(.eyedropper-btn)');
             
-            // Check if element has a background color set
-            const style = window.getComputedStyle(element);
-            const bgColor = style.backgroundColor;
+            colorElements.forEach(element => {
+                // 跳過已經有按鈕的元素
+                if (element.querySelector('.eyedropper-btn')) return;
+                
+                const computedStyle = window.getComputedStyle(element);
+                const bgColor = computedStyle.backgroundColor;
+                
+                // 跳過透明或無效的背景色
+                if (!bgColor || bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)') return;
+                
+                const rect = element.getBoundingClientRect();
+                // 只處理足夠大的顏色顯示元素
+                if (rect.width >= 30 && rect.height >= 15) {
+                    // 確保元素有相對定位
+                    if (computedStyle.position === 'static') {
+                        element.style.position = 'relative';
+                    }
+                    
+                    const button = createEyedropperButton(element);
+                    element.appendChild(button);
+                    buttonsAdded++;
+                    
+                    console.log('Added eyedropper button to color element');
+                }
+            });
+        });
+        
+        // 也檢查直接的顏色元素
+        const directColorElements = document.querySelectorAll('.black.box, span[style*="background-color"]');
+        directColorElements.forEach(element => {
+            if (element.querySelector('.eyedropper-btn')) return;
             
-            // Skip if no background color or transparent
-            if (!bgColor || bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)') {
-                return;
-            }
-            
-            // Skip if element is too small (likely not a color display)
             const rect = element.getBoundingClientRect();
-            if (rect.width < 10 || rect.height < 10) {
-                return;
-            }
-            
-            // Check if this is in the Theme Colors section
-            const themeSection = element.closest('.setting_block, .themes_settings, #themes');
-            if (!themeSection) {
-                return;
-            }
-            
-            console.log(`Processing color element ${index}:`, {
-                tag: element.tagName,
-                class: element.className,
-                bgColor: bgColor,
-                size: `${rect.width}x${rect.height}`
-            });
-            
-            // Create picker button
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'color-picker-btn';
-            button.innerHTML = '🎨';
-            button.title = '使用滴管工具選取螢幕顏色';
-            
-            // Style the button
-            button.style.cssText = `
-                position: absolute !important;
-                top: 2px !important;
-                right: 2px !important;
-                width: 20px !important;
-                height: 20px !important;
-                background: rgba(0,0,0,0.7) !important;
-                color: white !important;
-                border: 1px solid white !important;
-                border-radius: 3px !important;
-                cursor: pointer !important;
-                font-size: 10px !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                z-index: 1000 !important;
-                transition: all 0.2s ease !important;
-                opacity: 0.7 !important;
-            `;
-            
-            // Add hover effects
-            button.addEventListener('mouseenter', () => {
-                button.style.opacity = '1';
-                button.style.transform = 'scale(1.1)';
-            });
-            
-            button.addEventListener('mouseleave', () => {
-                if (!isPickingColor) {
-                    button.style.opacity = '0.7';
-                    button.style.transform = 'scale(1)';
+            if (rect.width >= 20 && rect.height >= 15) {
+                const computedStyle = window.getComputedStyle(element);
+                if (computedStyle.position === 'static') {
+                    element.style.position = 'relative';
                 }
-            });
-            
-            // Add click handler
-            button.onclick = async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
                 
-                if (isPickingColor) return;
-                
-                try {
-                    isPickingColor = true;
-                    button.style.opacity = '1';
-                    button.style.background = '#007bff';
-                    button.innerHTML = '⏳';
-                    button.title = '點擊螢幕選取顏色...';
-                    
-                    console.log('Starting color picker...');
-                    const eyeDropper = new EyeDropper();
-                    const result = await eyeDropper.open();
-                    
-                    console.log('Color picked:', result.sRGBHex);
-                    
-                    if (result.sRGBHex) {
-                        updateThemeColor(element, result.sRGBHex);
-                        
-                        if (typeof toastr !== 'undefined') {
-                            toastr.success(`顏色設定為 ${result.sRGBHex}`);
-                        }
-                        
-                        console.log('Color applied successfully');
-                    }
-                } catch (error) {
-                    if (error.name !== 'AbortError') {
-                        console.error('Color picking failed:', error);
-                        if (typeof toastr !== 'undefined') {
-                            toastr.error('取色失敗: ' + error.message);
-                        }
-                    } else {
-                        console.log('Color picking cancelled by user');
-                    }
-                } finally {
-                    isPickingColor = false;
-                    button.style.opacity = '0.7';
-                    button.style.background = 'rgba(0,0,0,0.7)';
-                    button.innerHTML = '🎨';
-                    button.title = '使用滴管工具選取螢幕顏色';
-                }
-            };
-            
-            // Make the parent element positioned relative if needed
-            if (style.position === 'static') {
-                element.style.position = 'relative';
+                const button = createEyedropperButton(element);
+                element.appendChild(button);
+                buttonsAdded++;
             }
-            
-            // Insert button as child of the color element
-            element.appendChild(button);
-            buttonsAdded++;
-            
-            console.log(`Successfully added button for color element ${index}`);
         });
         
         if (buttonsAdded > 0) {
-            console.log(`Theme Color Picker: Added ${buttonsAdded} buttons`);
+            console.log(`Added ${buttonsAdded} eyedropper buttons`);
         }
+        
         return buttonsAdded;
     }
     
-    // Initial scan with delay
-    setTimeout(() => {
-        console.log('Initial color element scan starting...');
-        addColorPickerButtons();
-    }, 2000);
-    
-    // Watch for DOM changes
-    const observer = new MutationObserver((mutations) => {
-        let shouldCheck = false;
+    // 初始化
+    function initialize() {
+        console.log('Initializing SillyTavern Theme Color Picker...');
         
-        mutations.forEach(mutation => {
-            if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach(node => {
-                    if (node.nodeType === 1) {
-                        if (node.matches && node.matches('[style*="background"], .setting_block, .themes_settings')) {
-                            shouldCheck = true;
-                        }
-                        if (node.querySelector && node.querySelector('[style*="background"]')) {
-                            shouldCheck = true;
-                        }
-                    }
-                });
-            }
+        // 延遲執行，確保 DOM 完全載入
+        setTimeout(() => {
+            addEyedropperButtons();
+        }, 2000);
+        
+        // DOM 變化監聽
+        const observer = new MutationObserver((mutations) => {
+            let shouldRescan = false;
             
-            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                if (mutation.target.style.backgroundColor) {
-                    shouldCheck = true;
+            mutations.forEach(mutation => {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === 1) {
+                            if (node.matches && (
+                                node.matches('.color-picker-block') ||
+                                node.matches('.inline-drawer') ||
+                                node.matches('[style*="background-color"]') ||
+                                node.matches('.user-settings-block')
+                            )) {
+                                shouldRescan = true;
+                            }
+                            
+                            if (node.querySelector && (
+                                node.querySelector('.color-picker-block') ||
+                                node.querySelector('[style*="background-color"]')
+                            )) {
+                                shouldRescan = true;
+                            }
+                        }
+                    });
                 }
+                
+                if (mutation.type === 'attributes' && 
+                    mutation.attributeName === 'style' && 
+                    mutation.target.style.backgroundColor) {
+                    shouldRescan = true;
+                }
+            });
+            
+            if (shouldRescan) {
+                setTimeout(addEyedropperButtons, 500);
             }
         });
         
-        if (shouldCheck) {
-            setTimeout(addColorPickerButtons, 500);
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style']
+        });
+        
+        // 監聽 SillyTavern 事件
+        $(document).on('click', '.drawer-toggle, .inline_ctrls', function() {
+            setTimeout(addEyedropperButtons, 300);
+        });
+        
+        // 定期檢查
+        setInterval(addEyedropperButtons, 10000);
+        
+        console.log('SillyTavern Theme Color Picker initialized');
+    }
+    
+    // ESC 鍵取消
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isPickingColor && activeButton) {
+            console.log('Color picking cancelled by ESC');
+            isPickingColor = false;
+            resetButton(activeButton);
+            activeButton = null;
         }
     });
     
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['style']
-    });
-    
-    // Listen for settings changes
-    $(document).on('click', '.setting_block, [data-setting], .themes_settings', function() {
-        setTimeout(addColorPickerButtons, 300);
-    });
-    
-    // Periodic check
-    setInterval(addColorPickerButtons, 5000);
-    
-    console.log('Theme Color Picker Extension: Initialization complete');
+    // 開始初始化
+    initialize();
 });
