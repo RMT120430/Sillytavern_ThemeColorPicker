@@ -1,82 +1,62 @@
 /* Theme Color Picker Extension Styles */
 
 .color-picker-btn {
-    margin-left: 5px !important;
-    margin-top: 5px !important;
-}
-
-/* 確保在主題設定區域中正確顯示 */
-.themes_settings .color-picker-btn,
-#themes .color-picker-btn,
-.theme-colors .color-picker-btn {
-    margin-left: 3px !important;
-    background-color: #4a4a4a !important;
-    border-color: #666 !important;
-    color: #ffffff !important;
+    margin-left: 6px !important;
+    padding: 6px 8px !important;
+    background: var(--SmartThemeUIBackgroundColor, #444) !important;
+    color: var(--SmartThemeMainTextColor, white) !important;
+    border: 1px solid var(--SmartThemeUIBorderColor, #666) !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: top !important;
+    transition: all 0.2s ease !important;
+    box-sizing: border-box !important;
 }
 
 .color-picker-btn:hover {
-    background-color: var(--SmartThemeUIBorderColor, #666) !important;
+    background: var(--SmartThemeUIBorderColor, #666) !important;
     transform: scale(1.05) !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
 }
 
 .color-picker-btn:active {
     transform: scale(0.95) !important;
 }
 
-.color-picker-btn.picking {
-    background-color: #007bff !important;
-    color: white !important;
-    border-color: #007bff !important;
+.color-picker-btn:focus {
+    outline: 2px solid var(--SmartThemeMainTextColor, white) !important;
+    outline-offset: 2px !important;
 }
 
-/* 確保與顏色輸入框正確對齊 */
+/* Specific styles for theme color section */
+#themes .color-picker-btn,
+.theme-colors .color-picker-btn,
+.inline-drawer .color-picker-btn {
+    margin-left: 4px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    font-size: 13px !important;
+}
+
+/* Ensure proper alignment with color inputs */
 input[type="color"] + .color-picker-btn {
     vertical-align: top !important;
     margin-top: 0 !important;
 }
 
-/* 在不同容器中的特定樣式 */
-.inline-drawer .color-picker-btn {
-    height: 30px !important;
-    min-width: 30px !important;
-    padding: 4px 6px !important;
-}
-
-/* FlexContainer 內的樣式調整 */
+/* Container specific adjustments */
 .flexContainer .color-picker-btn,
 .flex-container .color-picker-btn {
     flex-shrink: 0 !important;
 }
 
-/* 確保在深色主題下可見 */
-body.dark-theme .color-picker-btn,
-.dark .color-picker-btn {
-    background-color: #555 !important;
-    border-color: #777 !important;
-    color: #fff !important;
-}
-
-body.dark-theme .color-picker-btn:hover,
-.dark .color-picker-btn:hover {
-    background-color: #666 !important;
-}
-
-/* 確保在淺色主題下可見 */
-body.light-theme .color-picker-btn,
-.light .color-picker-btn {
-    background-color: #e9ecef !important;
-    border-color: #ced4da !important;
-    color: #495057 !important;
-}
-
-body.light-theme .color-picker-btn:hover,
-.light .color-picker-btn:hover {
-    background-color: #dee2e6 !important;
-}
-
-/* 選取動畫 */
+/* Working state animation */
 @keyframes pulse {
     0% { 
         opacity: 1; 
@@ -94,42 +74,79 @@ body.light-theme .color-picker-btn:hover,
 
 .color-picker-btn.picking {
     animation: pulse 1s infinite !important;
+    background: #007bff !important;
 }
 
-/* 確保圖標正確顯示 */
-.color-picker-btn::before {
-    font-family: "Font Awesome 6 Free" !important;
-    font-weight: 900 !important;
-    content: "\f1fb" !important; /* fa-eye-dropper */
+/* Dark theme compatibility */
+body.dark .color-picker-btn,
+[data-theme="dark"] .color-picker-btn {
+    background: #555 !important;
+    border-color: #777 !important;
+    color: #fff !important;
 }
 
-/* 針對可能的佈局問題的修復 */
-.color-picker-btn {
-    white-space: nowrap !important;
-    overflow: hidden !important;
+body.dark .color-picker-btn:hover,
+[data-theme="dark"] .color-picker-btn:hover {
+    background: #666 !important;
 }
 
-/* 確保在狹窄空間中也能正確顯示 */
+/* Light theme compatibility */
+body.light .color-picker-btn,
+[data-theme="light"] .color-picker-btn {
+    background: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    color: #495057 !important;
+}
+
+body.light .color-picker-btn:hover,
+[data-theme="light"] .color-picker-btn:hover {
+    background: #e9ecef !important;
+}
+
+/* Mobile responsiveness */
 @media (max-width: 768px) {
     .color-picker-btn {
         min-width: 28px !important;
         height: 28px !important;
-        padding: 3px 5px !important;
+        padding: 4px 6px !important;
         font-size: 12px !important;
+        margin-left: 4px !important;
+    }
+    
+    #themes .color-picker-btn,
+    .theme-colors .color-picker-btn {
+        min-width: 26px !important;
+        height: 26px !important;
     }
 }
 
-/* 針對特定的 SillyTavern 類別的覆蓋 */
+/* Prevent button from being hidden or overlapped */
+.color-picker-btn {
+    position: relative !important;
+    z-index: 10 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+}
+
+/* Ensure the button doesn't break layout */
+.color-picker-btn {
+    flex-shrink: 0 !important;
+    max-width: none !important;
+}
+
+/* Fix for potential SillyTavern theme conflicts */
 .menu_button.color-picker-btn {
-    background-color: var(--SmartThemeUIBackgroundColor, #444) !important;
-    border-color: var(--SmartThemeUIBorderColor, #666) !important;
+    background: var(--SmartThemeUIBackgroundColor, #444) !important;
+    border: 1px solid var(--SmartThemeUIBorderColor, #666) !important;
 }
 
 .menu_button.color-picker-btn:hover {
-    background-color: var(--SmartThemeUIBorderColor, #666) !important;
+    background: var(--SmartThemeUIBorderColor, #666) !important;
 }
 
-/* 確保按鈕不會被其他元素遮蔽 */
+/* Ensure visibility in all contexts */
 .color-picker-btn {
-    isolation: isolate !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-flex !important;
 }
