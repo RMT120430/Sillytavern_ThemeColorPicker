@@ -2,25 +2,7 @@
 
 .color-picker-btn {
     margin-left: 5px !important;
-    padding: 5px 8px !important;
-    min-width: 32px !important;
-    height: 32px !important;
-    border: 1px solid var(--SmartThemeUIBorderColor, #666) !important;
-    background-color: var(--SmartThemeUIBackgroundColor, #444) !important;
-    color: var(--SmartThemeBodyColor, #fff) !important;
-    border-radius: 4px !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    vertical-align: middle !important;
-    font-size: 14px !important;
-    line-height: 1 !important;
-    text-decoration: none !important;
-    box-sizing: border-box !important;
-    position: relative !important;
-    z-index: 10 !important;
+    margin-top: 5px !important;
 }
 
 /* 確保在主題設定區域中正確顯示 */
