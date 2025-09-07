@@ -1,152 +1,212 @@
-/* Theme Color Picker Extension Styles */
+/* SillyTavern Theme Color Picker Extension - CSS */
 
-.color-picker-btn {
-    margin-left: 6px !important;
-    padding: 6px 8px !important;
-    background: var(--SmartThemeUIBackgroundColor, #444) !important;
-    color: var(--SmartThemeMainTextColor, white) !important;
-    border: 1px solid var(--SmartThemeUIBorderColor, #666) !important;
-    border-radius: 4px !important;
+/* 滴管按鈕基本樣式 */
+.eyedropper-btn {
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    width: 20px !important;
+    height: 20px !important;
+    background: rgba(0, 123, 255, 0.8) !important;
+    color: white !important;
+    border: 1px solid rgba(0, 123, 255, 1) !important;
+    border-radius: 3px !important;
     cursor: pointer !important;
-    font-size: 14px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    display: inline-flex !important;
+    font-size: 10px !important;
+    display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    vertical-align: top !important;
+    z-index: 1000 !important;
     transition: all 0.2s ease !important;
+    opacity: 0.7 !important;
     box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-.color-picker-btn:hover {
-    background: var(--SmartThemeUIBorderColor, #666) !important;
-    transform: scale(1.05) !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3) !important;
+/* 懸停效果 */
+.eyedropper-btn:hover {
+    opacity: 1 !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.4) !important;
 }
 
-.color-picker-btn:active {
+/* 活動狀態 */
+.eyedropper-btn:active {
     transform: scale(0.95) !important;
 }
 
-.color-picker-btn:focus {
-    outline: 2px solid var(--SmartThemeMainTextColor, white) !important;
-    outline-offset: 2px !important;
+/* 焦點狀態 */
+.eyedropper-btn:focus {
+    outline: 2px solid rgba(0, 123, 255, 0.6) !important;
+    outline-offset: 1px !important;
 }
 
-/* Specific styles for theme color section */
-#themes .color-picker-btn,
-.theme-colors .color-picker-btn,
-.inline-drawer .color-picker-btn {
-    margin-left: 4px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    font-size: 13px !important;
+/* 選色中狀態 */
+.eyedropper-btn.picking {
+    background: #ff4444 !important;
+    border-color: #ff2222 !important;
+    opacity: 1 !important;
+    animation: pickingPulse 1.5s infinite ease-in-out !important;
 }
 
-/* Ensure proper alignment with color inputs */
-input[type="color"] + .color-picker-btn {
-    vertical-align: top !important;
-    margin-top: 0 !important;
-}
-
-/* Container specific adjustments */
-.flexContainer .color-picker-btn,
-.flex-container .color-picker-btn {
-    flex-shrink: 0 !important;
-}
-
-/* Working state animation */
-@keyframes pulse {
+/* 選色動畫 */
+@keyframes pickingPulse {
     0% { 
-        opacity: 1; 
         transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
     }
     50% { 
-        opacity: 0.7; 
-        transform: scale(1.02);
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(255, 68, 68, 0);
     }
     100% { 
-        opacity: 1; 
         transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
     }
 }
 
-.color-picker-btn.picking {
-    animation: pulse 1s infinite !important;
-    background: #007bff !important;
+/* 成功狀態 */
+.eyedropper-btn.success {
+    background: #28a745 !important;
+    border-color: #20a03a !important;
+    transform: scale(1.1) !important;
 }
 
-/* Dark theme compatibility */
-body.dark .color-picker-btn,
-[data-theme="dark"] .color-picker-btn {
-    background: #555 !important;
-    border-color: #777 !important;
-    color: #fff !important;
+/* 確保按鈕在 SillyTavern 顏色元素中的定位 */
+.color-picker-block .eyedropper-btn,
+.inline-drawer .eyedropper-btn,
+.user-settings-block .eyedropper-btn {
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
 }
 
-body.dark .color-picker-btn:hover,
-[data-theme="dark"] .color-picker-btn:hover {
-    background: #666 !important;
+/* 特殊情況：小型顏色方塊 */
+.black.box .eyedropper-btn,
+span[style*="background-color"] .eyedropper-btn {
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 8px !important;
+    top: 1px !important;
+    right: 1px !important;
 }
 
-/* Light theme compatibility */
-body.light .color-picker-btn,
-[data-theme="light"] .color-picker-btn {
-    background: #f8f9fa !important;
-    border-color: #dee2e6 !important;
-    color: #495057 !important;
+/* 確保父元素有相對定位 */
+.color-picker-block [style*="background-color"],
+.inline-drawer [style*="background-color"],
+.user-settings-block [style*="background-color"] {
+    position: relative !important;
 }
 
-body.light .color-picker-btn:hover,
-[data-theme="light"] .color-picker-btn:hover {
-    background: #e9ecef !important;
-}
-
-/* Mobile responsiveness */
+/* 響應式設計 */
 @media (max-width: 768px) {
-    .color-picker-btn {
-        min-width: 28px !important;
-        height: 28px !important;
-        padding: 4px 6px !important;
-        font-size: 12px !important;
-        margin-left: 4px !important;
+    .eyedropper-btn {
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 9px !important;
     }
     
-    #themes .color-picker-btn,
-    .theme-colors .color-picker-btn {
-        min-width: 26px !important;
-        height: 26px !important;
+    .black.box .eyedropper-btn,
+    span[style*="background-color"] .eyedropper-btn {
+        width: 14px !important;
+        height: 14px !important;
+        font-size: 7px !important;
     }
 }
 
-/* Prevent button from being hidden or overlapped */
-.color-picker-btn {
-    position: relative !important;
-    z-index: 10 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
+/* 暗色主題適配 */
+body.dark .eyedropper-btn,
+[data-theme="dark"] .eyedropper-btn {
+    background: rgba(70, 130, 180, 0.8) !important;
+    border-color: rgba(70, 130, 180, 1) !important;
 }
 
-/* Ensure the button doesn't break layout */
-.color-picker-btn {
-    flex-shrink: 0 !important;
-    max-width: none !important;
+body.dark .eyedropper-btn:hover,
+[data-theme="dark"] .eyedropper-btn:hover {
+    background: rgba(70, 130, 180, 1) !important;
+    box-shadow: 0 2px 6px rgba(70, 130, 180, 0.4) !important;
 }
 
-/* Fix for potential SillyTavern theme conflicts */
-.menu_button.color-picker-btn {
-    background: var(--SmartThemeUIBackgroundColor, #444) !important;
-    border: 1px solid var(--SmartThemeUIBorderColor, #666) !important;
+/* 亮色主題適配 */
+body.light .eyedropper-btn,
+[data-theme="light"] .eyedropper-btn {
+    background: rgba(0, 123, 255, 0.9) !important;
+    border-color: rgba(0, 123, 255, 1) !important;
+    color: white !important;
 }
 
-.menu_button.color-picker-btn:hover {
-    background: var(--SmartThemeUIBorderColor, #666) !important;
-}
-
-/* Ensure visibility in all contexts */
-.color-picker-btn {
-    opacity: 1 !important;
+/* 確保按鈕始終可見 */
+.eyedropper-btn {
     visibility: visible !important;
-    display: inline-flex !important;
+    display: flex !important;
+    opacity: 0.7 !important;
+}
+
+.eyedropper-btn:hover {
+    opacity: 1 !important;
+}
+
+/* 防止被其他元素遮擋 */
+.eyedropper-btn {
+    z-index: 1000 !important;
+}
+
+/* 高對比度模式支援 */
+@media (prefers-contrast: high) {
+    .eyedropper-btn {
+        border-width: 2px !important;
+        background: #0066cc !important;
+        border-color: #004499 !important;
+        opacity: 1 !important;
+    }
+    
+    .eyedropper-btn:hover {
+        background: #004499 !important;
+    }
+}
+
+/* 減少動畫偏好 */
+@media (prefers-reduced-motion: reduce) {
+    .eyedropper-btn {
+        transition: opacity 0.1s ease !important;
+    }
+    
+    @keyframes pickingPulse {
+        0%, 100% { 
+            transform: scale(1);
+        }
+        50% { 
+            transform: scale(1.02);
+        }
+    }
+}
+
+/* 確保在所有 SillyTavern 佈局中正常工作 */
+.eyedropper-btn {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    max-width: none !important;
+    min-width: auto !important;
+}
+
+/* 特殊容器適配 */
+.drawer-content .eyedropper-btn,
+.popup .eyedropper-btn {
+    position: absolute !important;
+    z-index: 10001 !important;
+}
+
+/* 確保不會影響原有佈局 */
+[style*="background-color"]:has(.eyedropper-btn) {
+    position: relative !important;
+}
+
+/* 針對 SillyTavern 特殊類名的適配 */
+.inline_ctrls .eyedropper-btn,
+.range-block .eyedropper-btn {
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
 }
