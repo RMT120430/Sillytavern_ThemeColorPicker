@@ -1,6 +1,6 @@
 {
   "display_name": "Sillytavern-ThemeColorPicker",
-  "loading_order": 5,
+  "loading_order": 20,
   "requires": [],
   "optional": [],
   "js": "index.js",
@@ -10,4 +10,5 @@
   "homePage": "https://github.com/RMT120430/Sillytavern_ThemeColorPicker",
   "auto_update": false
 }
+
 
