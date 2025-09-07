@@ -3,9 +3,10 @@
   "loading_order": 1,
   "js": "index.js",
   "css": "style.css",
-  "author": "Extension Developer",
+  "author": "RMT120430",
   "version": "1.0.0",
-  "homePage": "https://github.com/your-username/sillytavern-theme-color-picker",
+  "homePage": "https://github.com/RMT120430/Sillytavern_ThemeColorPicker",
   "auto_update": true,
   "minimum_client_version": "1.0.0"
+
 }
