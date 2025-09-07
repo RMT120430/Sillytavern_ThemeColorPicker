@@ -1,0 +1,11 @@
+{
+  "display_name": "Theme Color Picker Extension",
+  "loading_order": 1,
+  "js": "index.js",
+  "css": "style.css",
+  "author": "Extension Developer",
+  "version": "1.0.0",
+  "homePage": "https://github.com/your-username/sillytavern-theme-color-picker",
+  "auto_update": true,
+  "minimum_client_version": "1.0.0"
+}

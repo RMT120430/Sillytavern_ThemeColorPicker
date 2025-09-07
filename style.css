@@ -1,0 +1,54 @@
+/* Theme Color Picker Extension Styles */
+
+.color-picker-btn {
+    margin-left: 5px !important;
+    padding: 5px 8px !important;
+    min-width: 32px;
+    height: 32px;
+    border: 1px solid var(--SmartThemeUIBorderColor);
+    background-color: var(--SmartThemeUIBackgroundColor);
+    color: var(--SmartThemeBodyColor);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.color-picker-btn:hover {
+    background-color: var(--SmartThemeUIBorderColor);
+    transform: scale(1.05);
+}
+
+.color-picker-btn:active {
+    transform: scale(0.95);
+}
+
+.color-picker-btn.picking {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Ensure proper spacing for color inputs with picker buttons */
+input[type="color"] + .color-picker-btn {
+    vertical-align: top;
+}
+
+/* Style adjustments for theme settings panel */
+.themes_settings .color-picker-btn {
+    margin-left: 3px !important;
+}
+
+/* Animation for when picking */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.color-picker-btn.picking {
+    animation: pulse 1s infinite;
+}
