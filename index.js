@@ -154,13 +154,36 @@ jQuery(async () => {
                 }
             };
             
-            // Insert button after input
-            if (input.nextSibling) {
-                input.parentNode.insertBefore(button, input.nextSibling);
-            } else {
-                input.parentNode.appendChild(button);
+            // Insert button based on determined method
+            try {
+                if (insertMethod === 'after') {
+                    if (insertTarget.nextSibling) {
+                        insertTarget.parentNode.insertBefore(button, insertTarget.nextSibling);
+                    } else {
+                        insertTarget.parentNode.appendChild(button);
+                    }
+                } else {
+                    insertTarget.appendChild(button);
+                }
+                
+                buttonsAdded++;
+                console.log(`Successfully added button for input ${index}`);
+            } catch (error) {
+                console.error(`Failed to insert button for input ${index}:`, error);
+                
+                // Fallback: try to insert directly after input
+                try {
+                    if (input.nextSibling) {
+                        input.parentNode.insertBefore(button, input.nextSibling);
+                    } else {
+                        input.parentNode.appendChild(button);
+                    }
+                    buttonsAdded++;
+                    console.log(`Fallback insertion successful for input ${index}`);
+                } catch (fallbackError) {
+                    console.error(`Fallback insertion failed for input ${index}:`, fallbackError);
+                }
             }
-            buttonsAdded++;
         });
         
         if (buttonsAdded > 0) {
@@ -169,32 +192,21 @@ jQuery(async () => {
         return buttonsAdded;
     }
     
-    // Initial button addition with delay
-    setTimeout(addColorPickerButtons, 500);
+    // Initial button addition with longer delay and forced trigger
+    setTimeout(() => {
+        console.log('Initial scan starting...');
+        addColorPickerButtons();
+    }, 1500);
     
-    // Watch for settings panel opening
-    const observer = new MutationObserver((mutations) => {
-        let shouldCheck = false;
-        
-        mutations.forEach(mutation => {
-            if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach(node => {
-                    if (node.nodeType === 1) { // Element node
-                        // Check if themes section or color inputs were added
-                        if (node.matches && (
-                            node.matches('#themes, .theme-colors, .inline-drawer') ||
-                            node.querySelector && node.querySelector('input[type="color"]')
-                        )) {
-                            shouldCheck = true;
-                        }
-                    }
-                });
-            }
-        });
-        
-        if (shouldCheck) {
-            setTimeout(addColorPickerButtons, 200);
-        }
+    // Force trigger when theme colors are expanded
+    $(document).on('click', 'h4:contains("Theme Colors"), .theme_colors_toggle, [data-setting*="theme"]', function() {
+        console.log('Theme colors section clicked, adding buttons...');
+        setTimeout(addColorPickerButtons, 300);
+    });
+    
+    // Listen for any settings changes that might reveal color inputs
+    $(document).on('click change', '.setting_block, .inline-drawer, [class*="theme"]', function() {
+        setTimeout(addColorPickerButtons, 200);
     });
     
     observer.observe(document.body, {
