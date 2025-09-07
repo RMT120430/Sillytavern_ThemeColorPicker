@@ -1,15 +1,12 @@
 {
-  "display_name": "Sillytavern_ThemeColorPicker",
-  "loading_order": 20,
+  "display_name": "Theme Color Picker",
+  "loading_order": 10,
   "requires": [],
   "optional": [],
   "js": "index.js",
   "css": "style.css",
   "author": "RMT120430",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homePage": "https://github.com/RMT120430/Sillytavern_ThemeColorPicker",
-  "auto_update": false
+  "auto_update": false,
 }
-
-
-
