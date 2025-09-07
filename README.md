@@ -34,7 +34,7 @@
 3. 點擊「Download Extensions & Assets」
 4. 在「Install Extension」區域輸入：
    ```
-   https://github.com/your-username/Sillytavern_ThemeColorPicker
+   https://github.com/RMT120430/Sillytavern_ThemeColorPicker
    ```
 5. 點擊「Download」
 6. 重新整理頁面或重啟 SillyTavern
@@ -84,5 +84,6 @@
 AGPLv3 License
 
 ## 版本歷史
+
 
 - v1.0.0 - 初始版本，支援所有主題色彩滴管功能
