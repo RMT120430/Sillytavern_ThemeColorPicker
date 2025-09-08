@@ -1,6 +1,7 @@
-# 🔹Sillytavern_ThemeColorPicker Extension
+# 🎨 Sillytavern_ThemeColorPicker Extension 🎨
 
-Adds an eyedropper tool to SillyTavern's Theme Colors settings, allowing you to pick colors directly from the screen.
+Tired of copying color codes one by one, slowly adjusting theme colors?<br>
+Then your Sillytavern definitely needs this little tool! The Magic Eyedropper! 🪄
 
 ## 🔹Features
 
@@ -48,9 +49,10 @@ Adds an eyedropper tool to SillyTavern's Theme Colors settings, allowing you to 
 
 ## 🔹Notes
 
-- This feature requires a modern browser.
+- This feature is only available on PC
+- If there are fixed color codes in custom CSS styles, the colors will not display correctly (but the interface theme color will still change normally)
 - The Firefox browser does not currently support the EyeDropper API.
-- Color changes take effect immediately.
+- After the color is picked, the change will take effect immediately
 
 ## 🔹Troubleshooting
 
@@ -73,10 +75,10 @@ Adds an eyedropper tool to SillyTavern's Theme Colors settings, allowing you to 
 
 ---
 
-# 🎨Sillytavern_ThemeColorPicker Extension🎨
+# 🎨 Sillytavern_ThemeColorPicker Extension 🎨
 
-受夠了一個接著一個，緩慢複製色碼來調整主題顏色的過程了嗎？
-那你的Sillytavern一定需要這個小工具！神奇滴管！🪄
+受夠了一個接著一個，緩慢複製色碼來調整主題顏色的過程了嗎？<br>
+那你的 Sillytavern 一定需要這個小工具！神奇滴管！🪄
 
 ## 🔹功能特色
 - 在所有主題色彩設定旁添加滴管按鈕
@@ -123,9 +125,10 @@ Adds an eyedropper tool to SillyTavern's Theme Colors settings, allowing you to 
 
 ## 🔹注意事項
 
-- 此功能需要現代瀏覽器支援
+- 此功能僅適用PC端
 - Firefox 瀏覽器目前不支援 EyeDropper API
-- 顏色變更會立即生效
+- 自訂CSS樣式裡面如有固定色碼，則顏色不會正常顯示（但是介面主題顏色仍會正常變更）
+- 顏色吸取完成後，變更會立即生效
 
 ## 🔹故障排除
 
@@ -145,4 +148,5 @@ Adds an eyedropper tool to SillyTavern's Theme Colors settings, allowing you to 
 ## 🔹版本歷史
 
 - v1.0.0 - 初始版本
+
 
