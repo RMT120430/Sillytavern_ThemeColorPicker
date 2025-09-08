@@ -274,42 +274,6 @@
     }
 }
 
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-    .eyedropper-btn,
-    .color-picker-btn,
-    .theme-btn,
-    .settings-btn,
-    .action-btn {
-        border-width: 3px !important;
-        background: #0066cc !important;
-        border-color: #004499 !important;
-        opacity: 1 !important;
-    }
-    
-    .eyedropper-btn:hover,
-    .color-picker-btn:hover,
-    .theme-btn:hover,
-    .settings-btn:hover,
-    .action-btn:hover {
-        background: #004499 !important;
-    }
-    
-    .eyedropper-btn.picking,
-    .color-picker-btn.loading,
-    .theme-btn.loading {
-        background: #cc0000 !important;
-        border-color: #990000 !important;
-    }
-    
-    .eyedropper-btn.success,
-    .color-picker-btn.success,
-    .theme-btn.success {
-        background: #009900 !important;
-        border-color: #006600 !important;
-    }
-}
-
 /* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
     .eyedropper-btn,
