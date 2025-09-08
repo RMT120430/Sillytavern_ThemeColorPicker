@@ -1,9 +1,9 @@
-console.log('SillyTavern Theme Color Eyedropper: Starting initialization');
+console.log('SillyTavern Theme Color Picker: Starting initialization');
 
 jQuery(async () => {
     'use strict';
     
-    console.log('SillyTavern Theme Color Eyedropper: DOM ready');
+    console.log('SillyTavern Theme Color Picker: DOM ready');
     
     // Check EyeDropper API support
     if (!window.EyeDropper) {
@@ -274,7 +274,7 @@ jQuery(async () => {
     
     // Initialize the extension
     function initialize() {
-        console.log('Initializing SillyTavern Theme Color Eyedropper...');
+        console.log('Initializing SillyTavern Theme Color Picker...');
         
         // Multiple initialization attempts to handle dynamic loading
         setTimeout(() => addEyedropperButtons(), 1000);
@@ -337,7 +337,7 @@ jQuery(async () => {
         // Regular periodic check
         setInterval(addEyedropperButtons, 30000);
         
-        console.log('SillyTavern Theme Color Eyedropper initialized');
+        console.log('SillyTavern Theme Color Picker initialized');
     }
     
     // ESC key to cancel color picking
