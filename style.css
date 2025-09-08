@@ -14,7 +14,7 @@
     margin: 10px 5px 0 0 !important;
     padding: 0 !important;
     background: none;
-    color: rgba(255, 255, 255, 0.8) !important;
+    color: rgba(var(--SmartThemeBodyColor), 0.8) !important;
     border: 0px !important;
     border-radius: 50% !important;
     cursor: pointer !important;
@@ -69,7 +69,7 @@
 .theme-btn:focus,
 .settings-btn:focus,
 .action-btn:focus {
-    outline: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+    outline: 1.5px solid rgba(var(--SmartThemeBodyColor), 0.4) !important;
     outline-offset: 1px !important;
 }
 
@@ -79,7 +79,7 @@
 .theme-btn:focus-visible,
 .settings-btn:focus-visible,
 .action-btn:focus-visible {
-    outline: 1.5px solid rgba(255, 216, 98, 0.8) !important;
+    outline: 1.5px solid rgba(var(--SmartThemeQuoteColor), 0.8) !important;
     outline-offset: 1px !important;
 }
 
