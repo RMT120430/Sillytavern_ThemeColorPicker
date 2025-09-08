@@ -15,7 +15,7 @@
     padding: 0 !important;
     background: none;
     color: rgba(255, 255, 255, 0.8) !important;
-    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border: 0px !important;
     border-radius: 50% !important;
     cursor: pointer !important;
     font-size: 12px !important;
@@ -35,8 +35,8 @@
 .theme-btn svg,
 .settings-btn svg,
 .action-btn svg {
-    width: 12px !important;
-    height: 12px !important;
+    width: 14px !important;
+    height: 14px !important;
     stroke: currentColor !important;
     fill: none !important;
     transition: all 0.3s ease !important;
@@ -52,7 +52,6 @@
     transform: translateY(-1px) !important;
     background: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 1) !important;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2) !important;
 }
 
 /* Active state for all buttons */
@@ -62,7 +61,6 @@
 .settings-btn:active,
 .action-btn:active {
     transform: translateY(0) !important;
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3) !important;
 }
 
 /* Focus state for all buttons */
@@ -71,8 +69,8 @@
 .theme-btn:focus,
 .settings-btn:focus,
 .action-btn:focus {
-    outline: 3px solid rgba(0, 123, 255, 0.4) !important;
-    outline-offset: 2px !important;
+    outline: 2px solid rgba(255, 255, 255, 0.4) !important;
+    outline-offset: 1px !important;
 }
 
 /* Focus-visible for accessibility */
@@ -81,8 +79,8 @@
 .theme-btn:focus-visible,
 .settings-btn:focus-visible,
 .action-btn:focus-visible {
-    outline: 3px solid #ffbf00 !important;
-    outline-offset: 2px !important;
+    outline: 2px solid rgba(255, 216, 98, 0.8) !important;
+    outline-offset: 1px !important;
 }
 
 /* Picking/Loading state */
@@ -91,8 +89,7 @@
 .theme-btn.loading,
 .settings-btn.loading,
 .action-btn.loading {
-    background: linear-gradient(135deg, #dc3545, #c82333) !important;
-    border-color: #c82333 !important;
+    background: linear-gradient(135deg, #cc5d68, #952f3a) !important;
     animation: pickingPulse 1.5s infinite ease-in-out !important;
     opacity: 1 !important;
 }
@@ -112,8 +109,7 @@
 .theme-btn.success,
 .settings-btn.success,
 .action-btn.success {
-    background: linear-gradient(135deg, #28a745, #1e7e34) !important;
-    border-color: #1e7e34 !important;
+    background: linear-gradient(135deg, #529462, #194323) !important;
     transform: scale(1.1) !important;
     animation: successPulse 0.6s ease-out !important;
 }
@@ -124,8 +120,7 @@
 .theme-btn.error,
 .settings-btn.error,
 .action-btn.error {
-    background: linear-gradient(135deg, #dc3545, #c82333) !important;
-    border-color: #c82333 !important;
+    background: linear-gradient(135deg, #cc5d68, #952f3a) !important;
     animation: errorShake 0.5s ease-in-out !important;
 }
 
