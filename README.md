@@ -50,7 +50,7 @@ Then your Sillytavern definitely needs this little tool! The Magic Eyedropper! �
 ## 🔹Notes
 
 - This feature is only available on PC
-- If there are fixed color codes in custom CSS styles, the colors will not display correctly (but the interface theme color will still change normally)
+- If there are fixed color codes in custom CSS styles, the colors will not display correctly (but the interface theme colors will still change normally)
 - The Firefox browser does not currently support the EyeDropper API.
 - After the color is picked, the change will take effect immediately
 
@@ -148,5 +148,6 @@ Then your Sillytavern definitely needs this little tool! The Magic Eyedropper! �
 ## 🔹版本歷史
 
 - v1.0.0 - 初始版本
+
 
 
