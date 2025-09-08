@@ -135,7 +135,8 @@ jQuery(async () => {
     function getCurrentAlpha(colorPickerId) {
         const colorPicker = document.getElementById(colorPickerId);
         if (colorPicker && colorPicker.color) {
-            const match = colorPicker.color.match(/rgba?\([^,]+,[^,]+,[^,]+,?\s*([\d.]*)\)?/);
+            const colorValue = String(colorPicker.color);
+            const match = colorValue.match(/rgba?\([^,]+,[^,]+,[^,]+,?\s*([\d.]*)\)?/);
             return match && match[1] ? parseFloat(match[1]) : 1;
         }
         return 1;
