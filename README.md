@@ -73,12 +73,12 @@ Adds an eyedropper tool to SillyTavern's Theme Colors settings, allowing you to 
 
 ---
 
-# 🔹Sillytavern_ThemeColorPicker Extension
+# 🎨Sillytavern_ThemeColorPicker Extension🎨
 
-為 SillyTavern 的 Theme Colors 設定添加滴管工具，可直接從螢幕上吸取顏色。
+受夠了一個接著一個，緩慢複製色碼來調整主題顏色的過程了嗎？
+那你的Sillytavern一定需要這個小工具！神奇滴管！🪄
 
 ## 🔹功能特色
-
 - 在所有主題色彩設定旁添加滴管按鈕
 - 支援直接從螢幕任何位置選取顏色
 - 自動更新顏色值並觸發 SillyTavern 的色彩變更
@@ -145,3 +145,4 @@ Adds an eyedropper tool to SillyTavern's Theme Colors settings, allowing you to 
 ## 🔹版本歷史
 
 - v1.0.0 - 初始版本
+
