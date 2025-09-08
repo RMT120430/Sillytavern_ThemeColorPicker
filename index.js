@@ -1,9 +1,9 @@
-console.log('Theme Color Picker Extension: Starting initialization');
+console.log('SillyTavern Theme Color Eyedropper: Starting initialization');
 
 jQuery(async () => {
     'use strict';
     
-    console.log('Theme Color Picker Extension: DOM ready');
+    console.log('SillyTavern Theme Color Eyedropper: DOM ready');
     
     // Check EyeDropper API support
     if (!window.EyeDropper) {
@@ -16,6 +16,34 @@ jQuery(async () => {
     
     let isPickingColor = false;
     let activeButton = null;
+    
+    // Color picker ID to CSS variable mapping
+    const colorPickerMappings = {
+        'main-text-color-picker': '--SmartThemeMainTextColor',
+        'italics-color-picker': '--SmartThemeItalicsColor',
+        'underline-color-picker': '--SmartThemeUnderlinedColor',
+        'quote-color-picker': '--SmartThemeQuoteColor',
+        'shadow-color-picker': '--SmartThemeTextShadowColor',
+        'chat-tint-color-picker': '--SmartThemeChatBackgroundColor',
+        'blur-tint-color-picker': '--SmartThemeUIBackgroundColor',
+        'border-color-picker': '--SmartThemeUIBorderColor',
+        'user-mes-blur-tint-color-picker': '--SmartThemeUserMessageColor',
+        'bot-mes-blur-tint-color-picker': '--SmartThemeBotMessageColor'
+    };
+    
+    // Setting key mapping for SillyTavern power_user.themes
+    const settingKeyMapping = {
+        'main-text-color-picker': 'main_text_color',
+        'italics-color-picker': 'italics_text_color',
+        'underline-color-picker': 'underlined_text_color',
+        'quote-color-picker': 'quote_text_color',
+        'shadow-color-picker': 'text_shadow_color',
+        'chat-tint-color-picker': 'chat_bg_color',
+        'blur-tint-color-picker': 'ui_bg_color',
+        'border-color-picker': 'ui_border_color',
+        'user-mes-blur-tint-color-picker': 'user_msg_color',
+        'bot-mes-blur-tint-color-picker': 'ai_msg_color'
+    };
     
     // Color format conversion utilities
     const ColorUtils = {
@@ -33,7 +61,7 @@ jQuery(async () => {
         },
         
         parseRgbString(rgbString) {
-            const match = rgbString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+            const match = rgbString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/);
             return match ? {
                 r: parseInt(match[1]),
                 g: parseInt(match[2]),
@@ -41,69 +69,52 @@ jQuery(async () => {
             } : null;
         },
         
-        toHex(color) {
-            if (color.startsWith('#')) return color;
-            if (color.startsWith('rgb')) {
-                const rgb = this.parseRgbString(color);
-                return rgb ? this.rgbToHex(rgb.r, rgb.g, rgb.b) : color;
-            }
-            return color;
+        hexToRgba(hex, alpha = 1) {
+            const rgb = this.hexToRgb(hex);
+            return rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})` : hex;
         }
-    };
-    
-    // Color name to CSS variable mapping
-    const colorMappings = {
-        'Main Text': '--SmartThemeMainTextColor',
-        'Italics Text': '--SmartThemeItalicsColor',
-        'Underlined Text': '--SmartThemeUnderlinedColor',
-        'Quote Text': '--SmartThemeQuoteColor',
-        'Text Shadow': '--SmartThemeTextShadowColor',
-        'Chat Background': '--SmartThemeChatBackgroundColor',
-        'UI Background': '--SmartThemeUIBackgroundColor',
-        'UI Border': '--SmartThemeUIBorderColor',
-        'User Message': '--SmartThemeUserMessageColor',
-        'AI Message': '--SmartThemeBotMessageColor'
-    };
-    
-    // Setting key mapping for SillyTavern power_user.themes
-    const settingKeyMapping = {
-        'Main Text': 'main_text_color',
-        'Italics Text': 'italics_text_color', 
-        'Underlined Text': 'underlined_text_color',
-        'Quote Text': 'quote_text_color',
-        'Text Shadow': 'text_shadow_color',
-        'Chat Background': 'chat_bg_color',
-        'UI Background': 'ui_bg_color',
-        'UI Border': 'ui_border_color',
-        'User Message': 'user_msg_color',
-        'AI Message': 'ai_msg_color'
     };
     
     // Update theme color and apply changes
-    function updateThemeColor(colorName, newColor) {
-        console.log('Updating theme color:', colorName, 'to:', newColor);
+    function updateThemeColor(colorPickerId, newColor, originalAlpha = 1) {
+        console.log('Updating theme color for picker:', colorPickerId, 'to:', newColor);
+        
+        // Convert hex to rgba with original alpha
+        const rgbaColor = ColorUtils.hexToRgba(newColor, originalAlpha);
+        
+        // Find the toolcool-color-picker element
+        const colorPicker = document.getElementById(colorPickerId);
+        if (colorPicker) {
+            // Update the color picker
+            colorPicker.color = rgbaColor;
+            
+            // Trigger change event to update SillyTavern
+            const changeEvent = new CustomEvent('change', {
+                detail: { color: rgbaColor }
+            });
+            colorPicker.dispatchEvent(changeEvent);
+            
+            console.log(`Updated color picker ${colorPickerId} to ${rgbaColor}`);
+        }
         
         // Update CSS variable directly
-        const cssVar = colorMappings[colorName];
+        const cssVar = colorPickerMappings[colorPickerId];
         if (cssVar) {
-            document.documentElement.style.setProperty(cssVar, newColor);
-            console.log(`Updated CSS variable ${cssVar} to ${newColor}`);
+            document.documentElement.style.setProperty(cssVar, rgbaColor);
+            console.log(`Updated CSS variable ${cssVar} to ${rgbaColor}`);
         }
         
         // Update SillyTavern theme settings
-        const settingKey = settingKeyMapping[colorName];
+        const settingKey = settingKeyMapping[colorPickerId];
         if (settingKey && typeof power_user !== 'undefined' && power_user.themes) {
             const currentTheme = power_user.theme || 'default';
             if (!power_user.themes[currentTheme]) {
                 power_user.themes[currentTheme] = {};
             }
-            power_user.themes[currentTheme][settingKey] = newColor;
+            power_user.themes[currentTheme][settingKey] = rgbaColor;
             
-            console.log(`Updated theme setting ${settingKey} to ${newColor}`);
+            console.log(`Updated theme setting ${settingKey} to ${rgbaColor}`);
         }
-        
-        // Update the visual color display element
-        updateColorDisplay(colorName, newColor);
         
         // Trigger SillyTavern settings save
         setTimeout(() => {
@@ -117,176 +128,89 @@ jQuery(async () => {
             if (typeof applyTheme === 'function') {
                 applyTheme();
             }
-            
-            // Trigger custom event
-            $(document).trigger('themeColorChanged', [colorName, newColor]);
         }, 100);
     }
     
-    // Update color display element
-    function updateColorDisplay(colorName, newColor) {
-        const colorElements = findColorElementsByName(colorName);
-        colorElements.forEach(element => {
-            element.style.backgroundColor = newColor;
-        });
-    }
-    
-    // Find color display elements by color name
-    function findColorElementsByName(colorName) {
-        const elements = [];
-        
-        // Look for color picker blocks
-        const colorSections = document.querySelectorAll('.color-picker-block, .inline-drawer');
-        
-        colorSections.forEach(section => {
-            // Find the text label
-            const labels = section.querySelectorAll('*');
-            for (let label of labels) {
-                if (label.textContent && label.textContent.trim() === colorName) {
-                    // Find associated color display element
-                    const colorElement = label.parentElement?.querySelector('[style*="background-color"]') ||
-                                       label.nextElementSibling?.querySelector('[style*="background-color"]') ||
-                                       label.querySelector('[style*="background-color"]');
-                    if (colorElement) {
-                        elements.push(colorElement);
-                    }
-                    break;
-                }
-            }
-        });
-        
-        return elements;
-    }
-    
-    // Get color name from element context
-    function getColorNameFromElement(element) {
-        const container = element.closest('.color-picker-block, .inline-drawer, .user-settings-block');
-        if (!container) return null;
-        
-        // Look for text labels in the container
-        const textNodes = container.querySelectorAll('*');
-        for (let node of textNodes) {
-            const text = node.textContent?.trim();
-            if (text && colorMappings[text]) {
-                return text;
-            }
+    // Extract alpha value from current color
+    function getCurrentAlpha(colorPickerId) {
+        const colorPicker = document.getElementById(colorPickerId);
+        if (colorPicker && colorPicker.color) {
+            const match = colorPicker.color.match(/rgba?\([^,]+,[^,]+,[^,]+,?\s*([\d.]*)\)?/);
+            return match && match[1] ? parseFloat(match[1]) : 1;
         }
-        
-        // Fallback: try to determine from DOM structure
-        const allColorElements = container.querySelectorAll('[style*="background-color"]');
-        const index = Array.from(allColorElements).indexOf(element);
-        const colorNames = Object.keys(colorMappings);
-        
-        return colorNames[index] || null;
+        return 1;
     }
     
     // Create eyedropper button
-    function createEyedropperButton(targetElement, colorName) {
+    function createEyedropperButton(flexContainer) {
+        const colorPicker = flexContainer.querySelector('toolcool-color-picker');
+        if (!colorPicker || !colorPicker.id) return null;
+        
+        const colorPickerId = colorPicker.id;
+        const colorName = flexContainer.querySelector('span[data-i18n]')?.textContent || colorPickerId;
+        
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'eyedropper-btn';
         button.innerHTML = '🎨';
-        button.title = `Use eyedropper to pick color for ${colorName || 'this element'}`;
+        button.title = `使用吸色器選擇 ${colorName} 的顏色`;
+        button.setAttribute('data-color-picker-id', colorPickerId);
         
-        // Button styles
-        button.style.cssText = `
-            position: absolute !important;
-            top: 2px !important;
-            right: 2px !important;
-            width: 20px !important;
-            height: 20px !important;
-            background: rgba(0, 123, 255, 0.8) !important;
-            color: white !important;
-            border: 1px solid rgba(0, 123, 255, 1) !important;
-            border-radius: 3px !important;
-            cursor: pointer !important;
-            font-size: 10px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            z-index: 1000 !important;
-            transition: all 0.2s ease !important;
-            opacity: 0.7 !important;
-        `;
-        
-        // Hover effects
-        button.addEventListener('mouseenter', () => {
-            if (!isPickingColor) {
-                button.style.opacity = '1';
-                button.style.transform = 'scale(1.1)';
-            }
-        });
-        
-        button.addEventListener('mouseleave', () => {
-            if (!isPickingColor) {
-                button.style.opacity = '0.7';
-                button.style.transform = 'scale(1)';
-            }
-        });
-        
-        // Click event
+        // Button click event
         button.addEventListener('click', async (e) => {
             e.preventDefault();
             e.stopPropagation();
             
             if (isPickingColor) return;
             
-            const finalColorName = colorName || getColorNameFromElement(targetElement);
-            if (!finalColorName) {
-                if (typeof toastr !== 'undefined') {
-                    toastr.error('Could not determine color type for this element');
-                }
-                return;
-            }
-            
-            await startColorPicking(button, finalColorName);
+            await startColorPicking(button, colorPickerId, colorName);
         });
         
         return button;
     }
     
     // Start color picking process
-    async function startColorPicking(button, colorName) {
+    async function startColorPicking(button, colorPickerId, colorName) {
         if (isPickingColor) return;
         
         try {
             isPickingColor = true;
             activeButton = button;
             
+            // Get current alpha value to preserve it
+            const currentAlpha = getCurrentAlpha(colorPickerId);
+            
             // Update button state
-            button.style.background = '#ff4444';
-            button.style.borderColor = '#ff2222';
+            button.classList.add('picking');
             button.innerHTML = '⏳';
-            button.title = 'Click screen to pick color... (ESC to cancel)';
-            button.style.opacity = '1';
+            button.title = '點擊螢幕上的任意位置來選取顏色... (按 ESC 取消)';
             
             if (typeof toastr !== 'undefined') {
-                toastr.info(`Click anywhere on screen to pick color for ${colorName}`, 'Eyedropper Active');
+                toastr.info(`點擊螢幕上的任意位置來選取 ${colorName} 的顏色`, '吸色器已啟動');
             }
             
-            console.log('Starting eyedropper for:', colorName);
+            console.log('Starting eyedropper for:', colorPickerId);
             
             const eyeDropper = new EyeDropper();
             const result = await eyeDropper.open();
             
             if (result && result.sRGBHex) {
                 const selectedColor = result.sRGBHex.toLowerCase();
-                console.log('Color selected:', selectedColor, 'for:', colorName);
+                console.log('Color selected:', selectedColor, 'for:', colorPickerId);
                 
-                updateThemeColor(colorName, selectedColor);
+                updateThemeColor(colorPickerId, selectedColor, currentAlpha);
                 
                 if (typeof toastr !== 'undefined') {
-                    toastr.success(`${colorName} color set to ${selectedColor.toUpperCase()}`);
+                    toastr.success(`${colorName} 顏色已設定為 ${selectedColor.toUpperCase()}`);
                 }
                 
                 // Success state
-                button.style.background = '#28a745';
+                button.classList.remove('picking');
+                button.classList.add('success');
                 button.innerHTML = '✓';
                 
                 setTimeout(() => {
-                    if (button && !isPickingColor) {
-                        resetButton(button);
-                    }
+                    resetButton(button);
                 }, 1000);
             }
             
@@ -294,12 +218,12 @@ jQuery(async () => {
             if (error.name === 'AbortError') {
                 console.log('Color picking cancelled');
                 if (typeof toastr !== 'undefined') {
-                    toastr.info('Color picking cancelled');
+                    toastr.info('顏色選取已取消');
                 }
             } else {
                 console.error('Color picking failed:', error);
                 if (typeof toastr !== 'undefined') {
-                    toastr.error('Color picking failed: ' + error.message);
+                    toastr.error('顏色選取失敗: ' + error.message);
                 }
             }
         } finally {
@@ -315,67 +239,46 @@ jQuery(async () => {
     // Reset button state
     function resetButton(button) {
         if (button && button.parentNode) {
-            button.style.background = 'rgba(0, 123, 255, 0.8)';
-            button.style.borderColor = 'rgba(0, 123, 255, 1)';
+            button.classList.remove('picking', 'success');
             button.innerHTML = '🎨';
-            button.title = button.title.replace('Click screen to pick color... (ESC to cancel)', 'Use eyedropper to pick color');
-            button.style.opacity = '0.7';
-            button.style.transform = 'scale(1)';
+            const colorPickerId = button.getAttribute('data-color-picker-id');
+            const flexContainer = button.nextElementSibling;
+            const colorName = flexContainer?.querySelector('span[data-i18n]')?.textContent || colorPickerId;
+            button.title = `使用吸色器選擇 ${colorName} 的顏色`;
         }
     }
     
-    // Add eyedropper buttons to color elements
+    // Add eyedropper buttons to color picker containers
     function addEyedropperButtons() {
-        console.log('Scanning for SillyTavern color elements...');
+        console.log('Scanning for SillyTavern color picker containers...');
         
         let buttonsAdded = 0;
         
-        // Find theme color sections
-        const themeColorSections = [
-            ...document.querySelectorAll('.color-picker-block'),
-            ...document.querySelectorAll('[class*="color-picker"]'),
-            ...document.querySelectorAll('.inline-drawer'),
-            ...document.querySelectorAll('.user-settings-block')
-        ];
+        // Find all flex-container elements within color-picker-block
+        const colorPickerBlock = document.getElementById('color-picker-block');
+        if (!colorPickerBlock) {
+            console.log('Color picker block not found');
+            return 0;
+        }
         
-        themeColorSections.forEach(section => {
-            // Look for each known color type
-            Object.keys(colorMappings).forEach(colorName => {
-                // Find text label
-                const labels = section.querySelectorAll('*');
-                for (let label of labels) {
-                    if (label.textContent && label.textContent.trim() === colorName) {
-                        // Find associated color display element
-                        const colorElement = label.parentElement?.querySelector('[style*="background-color"]:not(.eyedropper-btn)') ||
-                                           label.nextElementSibling?.querySelector('[style*="background-color"]:not(.eyedropper-btn)') ||
-                                           section.querySelector(`[style*="background-color"]:not(.eyedropper-btn):nth-of-type(${Object.keys(colorMappings).indexOf(colorName) + 1})`);
-                        
-                        if (colorElement && !colorElement.querySelector('.eyedropper-btn')) {
-                            const computedStyle = window.getComputedStyle(colorElement);
-                            const bgColor = computedStyle.backgroundColor;
-                            
-                            // Skip transparent or invalid background colors
-                            if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
-                                const rect = colorElement.getBoundingClientRect();
-                                // Only process sufficiently large color display elements
-                                if (rect.width >= 20 && rect.height >= 15) {
-                                    // Ensure element has relative positioning
-                                    if (computedStyle.position === 'static') {
-                                        colorElement.style.position = 'relative';
-                                    }
-                                    
-                                    const button = createEyedropperButton(colorElement, colorName);
-                                    colorElement.appendChild(button);
-                                    buttonsAdded++;
-                                    
-                                    console.log(`Added eyedropper button for ${colorName}`);
-                                }
-                            }
-                        }
-                        break;
-                    }
-                }
-            });
+        const flexContainers = colorPickerBlock.querySelectorAll('.flex-container');
+        
+        flexContainers.forEach(flexContainer => {
+            // Check if this container has a toolcool-color-picker
+            const colorPicker = flexContainer.querySelector('toolcool-color-picker');
+            if (!colorPicker) return;
+            
+            // Check if eyedropper button already exists
+            const existingButton = flexContainer.parentNode.querySelector('.eyedropper-btn[data-color-picker-id="' + colorPicker.id + '"]');
+            if (existingButton) return;
+            
+            // Create and insert eyedropper button before the flex-container
+            const button = createEyedropperButton(flexContainer);
+            if (button) {
+                flexContainer.parentNode.insertBefore(button, flexContainer);
+                buttonsAdded++;
+                console.log(`Added eyedropper button for ${colorPicker.id}`);
+            }
         });
         
         if (buttonsAdded > 0) {
@@ -387,14 +290,14 @@ jQuery(async () => {
     
     // Initialize the extension
     function initialize() {
-        console.log('Initializing SillyTavern Theme Color Picker...');
+        console.log('Initializing SillyTavern Theme Color Eyedropper...');
         
-        // Multiple initialization attempts
-        setTimeout(() => addEyedropperButtons(), 1000);  // First attempt
-        setTimeout(() => addEyedropperButtons(), 3000);  // Second attempt
-        setTimeout(() => addEyedropperButtons(), 5000);  // Third attempt
+        // Multiple initialization attempts to handle dynamic loading
+        setTimeout(() => addEyedropperButtons(), 1000);
+        setTimeout(() => addEyedropperButtons(), 3000);
+        setTimeout(() => addEyedropperButtons(), 5000);
         
-        // DOM change observer with more comprehensive monitoring
+        // DOM change observer
         const observer = new MutationObserver((mutations) => {
             let shouldRescan = false;
             
@@ -403,31 +306,23 @@ jQuery(async () => {
                     mutation.addedNodes.forEach(node => {
                         if (node.nodeType === 1) {
                             if (node.matches && (
-                                node.matches('.color-picker-block') ||
-                                node.matches('.inline-drawer') ||
-                                node.matches('[style*="background-color"]') ||
-                                node.matches('.user-settings-block') ||
-                                node.matches('.drawer-content') ||
-                                node.matches('#ui-theme-block')
+                                node.matches('#color-picker-block') ||
+                                node.matches('.flex-container') ||
+                                node.matches('toolcool-color-picker') ||
+                                node.matches('.inline-drawer-content')
                             )) {
                                 shouldRescan = true;
                             }
                             
                             if (node.querySelector && (
-                                node.querySelector('.color-picker-block') ||
-                                node.querySelector('[style*="background-color"]') ||
-                                node.querySelector('.inline-drawer')
+                                node.querySelector('#color-picker-block') ||
+                                node.querySelector('toolcool-color-picker') ||
+                                node.querySelector('.flex-container')
                             )) {
                                 shouldRescan = true;
                             }
                         }
                     });
-                }
-                
-                if (mutation.type === 'attributes' && 
-                    mutation.attributeName === 'style' && 
-                    mutation.target.style.backgroundColor) {
-                    shouldRescan = true;
                 }
             });
             
@@ -439,36 +334,32 @@ jQuery(async () => {
         observer.observe(document.body, {
             childList: true,
             subtree: true,
-            attributes: true,
-            attributeFilter: ['style', 'class']
+            attributes: false
         });
         
-        // Listen for SillyTavern events more comprehensively
-        $(document).on('click', '.drawer-toggle, .inline_ctrls, .fa-palette, .menu_button', function() {
-            setTimeout(addEyedropperButtons, 300);
+        // Listen for theme color section opening
+        $(document).on('click', '.inline-drawer-toggle', function() {
+            const header = $(this);
+            if (header.find('span[data-i18n="Theme Colors"]').length > 0) {
+                setTimeout(addEyedropperButtons, 300);
+            }
         });
         
         // Listen for settings panel opening
-        $(document).on('click', '[id*="theme"], [class*="theme"], .user_stats_button', function() {
+        $(document).on('click', '.user_stats_button, [data-i18n*="theme"], [class*="theme"]', function() {
             setTimeout(addEyedropperButtons, 500);
-        });
-        
-        // More frequent checks initially
-        const intervals = [2000, 5000, 10000, 15000];
-        intervals.forEach(delay => {
-            setTimeout(addEyedropperButtons, delay);
         });
         
         // Regular periodic check
         setInterval(addEyedropperButtons, 30000);
         
-        console.log('SillyTavern Theme Color Picker initialized with enhanced monitoring');
+        console.log('SillyTavern Theme Color Eyedropper initialized');
     }
     
-    // ESC key to cancel
+    // ESC key to cancel color picking
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && isPickingColor && activeButton) {
-            console.log('Color picking cancelled by ESC');
+            console.log('Color picking cancelled by ESC key');
             isPickingColor = false;
             resetButton(activeButton);
             activeButton = null;
