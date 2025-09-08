@@ -1,5 +1,5 @@
 {
-  "display_name": "Theme Color Eyedropper",
+  "display_name": "Theme Color Picker",
   "loading_order": 1,
   "requires": [],
   "optional": [
@@ -11,4 +11,3 @@
   "version": "1.0.0",
   "homePage": "https://github.com/RMT120430/Sillytavern_ThemeColorPicker"
 }
-
