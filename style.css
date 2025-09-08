@@ -18,7 +18,7 @@
     border: 1px solid rgba(255, 255, 255, 0.8) !important;
     border-radius: 50% !important;
     cursor: pointer !important;
-    font-size: 8px !important;
+    font-size: 12px !important;
     transition: all 0.3s ease !important;
     opacity: 0.8 !important;
     position: relative !important;
@@ -35,8 +35,8 @@
 .theme-btn svg,
 .settings-btn svg,
 .action-btn svg {
-    width: 8px !important;
-    height: 8px !important;
+    width: 12px !important;
+    height: 12px !important;
     stroke: currentColor !important;
     fill: none !important;
     transition: all 0.3s ease !important;
