@@ -9,8 +9,8 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 22px !important;
-    height: 22px !important;
+    width: 18px !important;
+    height: 18px !important;
     margin: 10px 5px 0 0 !important;
     padding: 0 !important;
     background: none;
@@ -18,7 +18,7 @@
     border: 1px solid rgba(255, 255, 255, 0.8) !important;
     border-radius: 50% !important;
     cursor: pointer !important;
-    font-size: 11px !important;
+    font-size: 8px !important;
     transition: all 0.3s ease !important;
     opacity: 0.8 !important;
     position: relative !important;
