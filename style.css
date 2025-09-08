@@ -69,8 +69,8 @@
 .theme-btn:focus,
 .settings-btn:focus,
 .action-btn:focus {
-    outline: 2px solid rgba(255, 255, 255, 0.4) !important;
-    outline-offset: 1px !important;
+    outline: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+    outline-offset: 0.5px !important;
 }
 
 /* Focus-visible for accessibility */
@@ -79,8 +79,8 @@
 .theme-btn:focus-visible,
 .settings-btn:focus-visible,
 .action-btn:focus-visible {
-    outline: 2px solid rgba(255, 216, 98, 0.8) !important;
-    outline-offset: 1px !important;
+    outline: 1.5px solid rgba(255, 216, 98, 0.8) !important;
+    outline-offset: 0.5px !important;
 }
 
 /* Picking/Loading state */
@@ -89,7 +89,7 @@
 .theme-btn.loading,
 .settings-btn.loading,
 .action-btn.loading {
-    background: linear-gradient(135deg, #cc5d68, #952f3a) !important;
+    background: linear-gradient(135deg, #cc5d68 50%, #952f3a 50%) !important;
     animation: pickingPulse 1.5s infinite ease-in-out !important;
     opacity: 1 !important;
 }
@@ -109,7 +109,7 @@
 .theme-btn.success,
 .settings-btn.success,
 .action-btn.success {
-    background: linear-gradient(135deg, #529462, #194323) !important;
+    background: linear-gradient(135deg, #529462 50%, #194323 50%) !important;
     transform: scale(1.1) !important;
     animation: successPulse 0.6s ease-out !important;
 }
@@ -120,7 +120,7 @@
 .theme-btn.error,
 .settings-btn.error,
 .action-btn.error {
-    background: linear-gradient(135deg, #cc5d68, #952f3a) !important;
+    background: linear-gradient(135deg, #cc5d68 50%, #952f3a 50%) !important;
     animation: errorShake 0.5s ease-in-out !important;
 }
 
