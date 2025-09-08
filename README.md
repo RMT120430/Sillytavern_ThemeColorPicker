@@ -1,5 +1,78 @@
 # Sillytavern_ThemeColorPicker Extension
 
+Adds an eyedropper tool to SillyTavern's Theme Colors settings, allowing you to pick colors directly from the screen.
+
+## Features
+
+- Adds an eyedropper button next to all theme color settings.
+- Supports selecting colors from anywhere on the screen.
+- Automatically updates the color value and triggers SillyTavern's color change.
+- Supports all theme color items:
+  - Main Text
+  - Italics Text
+  - Underlined Text
+  - Quote Text
+  - Text Shadow
+  - Chat Background
+  - UI Background
+  - UI Border
+  - User Message
+  - AI Message
+
+## System Requirements
+
+- Chrome 95+ or Microsoft Edge 95+.
+- A modern browser that supports the EyeDropper API.
+- SillyTavern 1.0.0+
+
+## Installation
+
+1. Open SillyTavern.
+2. Click the extensions icon (stacked squares) in the top right corner.
+3. Click "Download Extensions & Assets".
+4. In the "Install Extension" area, enter:
+   ```
+   https://github.com/RMT120430/Sillytavern_ThemeColorPicker
+   ```
+5. Click "Download".
+6. Refresh the page or restart SillyTavern.
+
+## How to Use
+
+1. Go to SillyTavern's User Settings.
+2. Select the "UI Customization" tab.
+3. In the "Theme Colors" section, you will see an eyedropper icon next to each color input field.
+4. Click the eyedropper button to start picking a color.
+5. Your cursor will turn into a magnifying grid circle; click anywhere on the screen to select the color at that position.
+6. The color will be automatically applied to the corresponding theme setting.
+
+## Notes
+
+- This feature requires a modern browser.
+- The Firefox browser does not currently support the EyeDropper API.
+- Color changes take effect immediately.
+
+## Troubleshooting
+
+**The eyedropper button does not appear**
+- Confirm that the extension is installed and enabled correctly.
+- Refresh the page or restart SillyTavern.
+
+**Clicking the eyedropper button has no effect**
+- Check if your browser supports the EyeDropper API.
+- Try using Chrome or Edge.
+
+**The color is not applied after being selected**
+- Make sure you have clicked on the screen to select a color.
+- Check if the SillyTavern theme settings are functioning correctly.
+
+
+## Version History
+
+- v1.0.0 - Initial release, supports eyedropper functionality for all theme colors.
+
+# Sillytavern_ThemeColorPicker Extension
+
 為 SillyTavern 的 Theme Colors 設定添加滴管工具，可直接從螢幕上吸取顏色。
 
 ## 功能特色
@@ -71,4 +144,5 @@
 
 
 - v1.0.0 - 初始版本，支援所有主題色彩滴管功能
+
 
