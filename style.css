@@ -5,19 +5,18 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 32px !important;
-    height: 32px !important;
+    width: 28px !important;
+    height: 28px !important;
     margin: 0 8px 8px 0 !important;
     padding: 0 !important;
-    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    background: none;
     color: white !important;
-    border: 2px solid #0056b3 !important;
-    border-radius: 6px !important;
+    border: 1px solid white !important;
+    border-radius: 0px !important;
     cursor: pointer !important;
-    font-size: 16px !important;
+    font-size: 14px !important;
     transition: all 0.3s ease !important;
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3) !important;
-    opacity: 0.9 !important;
+    opacity: 0.8 !important;
     position: relative !important;
     overflow: hidden !important;
 }
@@ -26,8 +25,7 @@
 .eyedropper-btn:hover {
     opacity: 1 !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4) !important;
-    background: linear-gradient(135deg, #0056b3, #004085) !important;
+    background: none
 }
 
 /* Active state */
@@ -90,29 +88,8 @@
 /* Ensure proper layout within color picker block */
 #color-picker-block .eyedropper-btn {
     flex-shrink: 0 !important;
-    align-self: flex-start !important;
-}
-
-/* Dark theme adaptation */
-body.dark .eyedropper-btn,
-[data-theme="dark"] .eyedropper-btn {
-    background: linear-gradient(135deg, #4682b4, #2f5f7f) !important;
-    border-color: #2f5f7f !important;
-    box-shadow: 0 2px 4px rgba(70, 130, 180, 0.3) !important;
-}
-
-body.dark .eyedropper-btn:hover,
-[data-theme="dark"] .eyedropper-btn:hover {
-    background: linear-gradient(135deg, #2f5f7f, #1e4055) !important;
-    box-shadow: 0 4px 8px rgba(70, 130, 180, 0.4) !important;
-}
-
-/* Light theme specific styles */
-body.light .eyedropper-btn,
-[data-theme="light"] .eyedropper-btn {
-    background: linear-gradient(135deg, #007bff, #0056b3) !important;
-    border-color: #0056b3 !important;
-    color: white !important;
+    flex-wrap: nowrap !important;
+    align-self: center !important;
 }
 
 /* Responsive design */
