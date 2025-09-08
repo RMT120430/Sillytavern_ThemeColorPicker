@@ -1,54 +1,146 @@
 /* SillyTavern Theme Color Picker Extension - CSS */
 
-/* Eyedropper button base styles */
-.eyedropper-btn {
+/* Base button styles following .eyedropper-btn pattern */
+.eyedropper-btn,
+.color-picker-btn,
+.theme-btn,
+.settings-btn,
+.action-btn {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 20px !important;
-    height: 20px !important;
-    margin: 10px 10px 0 0 !important;
+    width: 28px !important;
+    height: 28px !important;
+    margin: 10px 5px 0 0 !important;
     padding: 0 !important;
     background: none;
-    color: white !important;
-    border: 1px solid white !important;
-    border-radius: 30px !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border-radius: 50% !important;
     cursor: pointer !important;
     font-size: 14px !important;
     transition: all 0.3s ease !important;
     opacity: 0.8 !important;
     position: relative !important;
     overflow: hidden !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    animation: buttonAppear 0.3s ease-out !important;
 }
 
-/* Hover effects */
-.eyedropper-btn:hover {
+/* SVG icon styling */
+.eyedropper-btn svg,
+.color-picker-btn svg,
+.theme-btn svg,
+.settings-btn svg,
+.action-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+    stroke: currentColor !important;
+    fill: none !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Hover effects for all buttons */
+.eyedropper-btn:hover,
+.color-picker-btn:hover,
+.theme-btn:hover,
+.settings-btn:hover,
+.action-btn:hover {
     opacity: 1 !important;
     transform: translateY(-1px) !important;
-    background: none
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 1) !important;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2) !important;
 }
 
-/* Active state */
-.eyedropper-btn:active {
+/* Active state for all buttons */
+.eyedropper-btn:active,
+.color-picker-btn:active,
+.theme-btn:active,
+.settings-btn:active,
+.action-btn:active {
     transform: translateY(0) !important;
     box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3) !important;
 }
 
-/* Focus state */
-.eyedropper-btn:focus {
+/* Focus state for all buttons */
+.eyedropper-btn:focus,
+.color-picker-btn:focus,
+.theme-btn:focus,
+.settings-btn:focus,
+.action-btn:focus {
     outline: 3px solid rgba(0, 123, 255, 0.4) !important;
     outline-offset: 2px !important;
 }
 
-/* Picking state */
-.eyedropper-btn.picking {
+/* Focus-visible for accessibility */
+.eyedropper-btn:focus-visible,
+.color-picker-btn:focus-visible,
+.theme-btn:focus-visible,
+.settings-btn:focus-visible,
+.action-btn:focus-visible {
+    outline: 3px solid #ffbf00 !important;
+    outline-offset: 2px !important;
+}
+
+/* Picking/Loading state */
+.eyedropper-btn.picking,
+.color-picker-btn.loading,
+.theme-btn.loading,
+.settings-btn.loading,
+.action-btn.loading {
     background: linear-gradient(135deg, #dc3545, #c82333) !important;
     border-color: #c82333 !important;
     animation: pickingPulse 1.5s infinite ease-in-out !important;
     opacity: 1 !important;
 }
 
-/* Picking animation */
+/* Loading animation for SVG icons */
+.eyedropper-btn.picking svg,
+.color-picker-btn.loading svg,
+.theme-btn.loading svg,
+.settings-btn.loading svg,
+.action-btn.loading svg {
+    animation: spin 1s linear infinite !important;
+}
+
+/* Success state */
+.eyedropper-btn.success,
+.color-picker-btn.success,
+.theme-btn.success,
+.settings-btn.success,
+.action-btn.success {
+    background: linear-gradient(135deg, #28a745, #1e7e34) !important;
+    border-color: #1e7e34 !important;
+    transform: scale(1.1) !important;
+    animation: successPulse 0.6s ease-out !important;
+}
+
+/* Error state */
+.eyedropper-btn.error,
+.color-picker-btn.error,
+.theme-btn.error,
+.settings-btn.error,
+.action-btn.error {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    border-color: #c82333 !important;
+    animation: errorShake 0.5s ease-in-out !important;
+}
+
+/* Disabled state */
+.eyedropper-btn:disabled,
+.color-picker-btn:disabled,
+.theme-btn:disabled,
+.settings-btn:disabled,
+.action-btn:disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+/* Animations */
 @keyframes pickingPulse {
     0% { 
         transform: scale(1) translateY(0);
@@ -64,15 +156,6 @@
     }
 }
 
-/* Success state */
-.eyedropper-btn.success {
-    background: linear-gradient(135deg, #28a745, #1e7e34) !important;
-    border-color: #1e7e34 !important;
-    transform: scale(1.1) !important;
-    animation: successPulse 0.6s ease-out !important;
-}
-
-/* Success animation */
 @keyframes successPulse {
     0% { 
         transform: scale(1);
@@ -85,51 +168,148 @@
     }
 }
 
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+    20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes buttonAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+}
+
 /* Ensure proper layout within color picker block */
-#color-picker-block .eyedropper-btn {
+#color-picker-block .eyedropper-btn,
+#color-picker-block .color-picker-btn,
+#color-picker-block .theme-btn {
     flex-shrink: 0 !important;
     flex-wrap: nowrap !important;
     align-self: flex-start !important;
 }
 
+/* Special handling for inline drawer content */
+.inline-drawer-content .eyedropper-btn,
+.inline-drawer-content .color-picker-btn,
+.inline-drawer-content .theme-btn {
+    z-index: 100 !important;
+}
+
+/* Ensure buttons don't interfere with layout */
+.flex-container .eyedropper-btn + .flex-container,
+.flex-container .color-picker-btn + .flex-container,
+.flex-container .theme-btn + .flex-container {
+    margin-left: 0 !important;
+}
+
+/* Custom tooltip styling */
+.eyedropper-btn[title]:hover::after,
+.color-picker-btn[title]:hover::after,
+.theme-btn[title]:hover::after,
+.settings-btn[title]:hover::after,
+.action-btn[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1001;
+    pointer-events: none;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
-    .eyedropper-btn {
-        width: 28px !important;
-        height: 28px !important;
-        font-size: 14px !important;
+    .eyedropper-btn,
+    .color-picker-btn,
+    .theme-btn,
+    .settings-btn,
+    .action-btn {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 16px !important;
         margin: 0 6px 6px 0 !important;
+    }
+    
+    .eyedropper-btn svg,
+    .color-picker-btn svg,
+    .theme-btn svg,
+    .settings-btn svg,
+    .action-btn svg {
+        width: 18px !important;
+        height: 18px !important;
     }
 }
 
 @media (max-width: 480px) {
-    .eyedropper-btn {
-        width: 24px !important;
-        height: 24px !important;
-        font-size: 12px !important;
+    .eyedropper-btn,
+    .color-picker-btn,
+    .theme-btn,
+    .settings-btn,
+    .action-btn {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 14px !important;
         margin: 0 4px 4px 0 !important;
+    }
+    
+    .eyedropper-btn svg,
+    .color-picker-btn svg,
+    .theme-btn svg,
+    .settings-btn svg,
+    .action-btn svg {
+        width: 16px !important;
+        height: 16px !important;
     }
 }
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-    .eyedropper-btn {
+    .eyedropper-btn,
+    .color-picker-btn,
+    .theme-btn,
+    .settings-btn,
+    .action-btn {
         border-width: 3px !important;
         background: #0066cc !important;
         border-color: #004499 !important;
         opacity: 1 !important;
     }
     
-    .eyedropper-btn:hover {
+    .eyedropper-btn:hover,
+    .color-picker-btn:hover,
+    .theme-btn:hover,
+    .settings-btn:hover,
+    .action-btn:hover {
         background: #004499 !important;
     }
     
-    .eyedropper-btn.picking {
+    .eyedropper-btn.picking,
+    .color-picker-btn.loading,
+    .theme-btn.loading {
         background: #cc0000 !important;
         border-color: #990000 !important;
     }
     
-    .eyedropper-btn.success {
+    .eyedropper-btn.success,
+    .color-picker-btn.success,
+    .theme-btn.success {
         background: #009900 !important;
         border-color: #006600 !important;
     }
@@ -137,15 +317,27 @@
 
 /* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
-    .eyedropper-btn {
+    .eyedropper-btn,
+    .color-picker-btn,
+    .theme-btn,
+    .settings-btn,
+    .action-btn {
         transition: opacity 0.2s ease !important;
     }
     
-    .eyedropper-btn:hover {
+    .eyedropper-btn:hover,
+    .color-picker-btn:hover,
+    .theme-btn:hover,
+    .settings-btn:hover,
+    .action-btn:hover {
         transform: none !important;
     }
     
-    .eyedropper-btn:active {
+    .eyedropper-btn:active,
+    .color-picker-btn:active,
+    .theme-btn:active,
+    .settings-btn:active,
+    .action-btn:active {
         transform: none !important;
     }
     
@@ -166,61 +358,12 @@
             transform: scale(1.02);
         }
     }
-}
-
-/* Ensure button doesn't interfere with layout */
-.eyedropper-btn {
-    box-sizing: border-box !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    flex-shrink: 0 !important;
-}
-
-/* Custom tooltip styling */
-.eyedropper-btn[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    top: -35px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 1001;
-    pointer-events: none;
-}
-
-/* Ensure proper spacing in flex containers */
-.flex-container .eyedropper-btn + .flex-container {
-    margin-left: 0 !important;
-}
-
-/* Special handling for inline drawer content */
-.inline-drawer-content .eyedropper-btn {
-    z-index: 100 !important;
-}
-
-/* Accessibility improvements */
-.eyedropper-btn:focus-visible {
-    outline: 3px solid #ffbf00 !important;
-    outline-offset: 2px !important;
-}
-
-/* Animation for button appearance */
-@keyframes buttonAppear {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
+    
+    .eyedropper-btn.picking svg,
+    .color-picker-btn.loading svg,
+    .theme-btn.loading svg,
+    .settings-btn.loading svg,
+    .action-btn.loading svg {
+        animation: none !important;
     }
-    to {
-        opacity: 0.9;
-        transform: scale(1);
-    }
-}
-
-.eyedropper-btn {
-    animation: buttonAppear 0.3s ease-out !important;
 }
