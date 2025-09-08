@@ -27,8 +27,6 @@
 
 ## 安裝方法
 
-### 從 GitHub 安裝（推薦）
-
 1. 開啟 SillyTavern
 2. 點擊右上角的擴展圖示（堆疊方塊）
 3. 點擊「Download Extensions & Assets」
@@ -39,31 +37,20 @@
 5. 點擊「Download」
 6. 重新整理頁面或重啟 SillyTavern
 
-### 手動安裝
-
-1. 下載本擴展的所有文件
-2. 在 SillyTavern 資料夾中找到：
-   - `data/default-user/extensions/third-party/` （所有用戶安裝）
-   - 或 `data/<your-user>/extensions/` （單一用戶安裝）
-3. 建立資料夾 `theme-color-picker`
-4. 將所有文件放入該資料夾
-5. 重新整理頁面
-
 ## 使用說明
 
 1. 進入 SillyTavern 的 User Settings
 2. 選擇「UI Customization」標籤
 3. 在「Theme Colors」區域，你會看到每個顏色輸入框旁邊都有滴管圖示
 4. 點擊滴管按鈕開始選取顏色
-5. 游標會變成十字線，點擊螢幕上任何位置選取該處的顏色
+5. 游標會變成吸色網格圓圈，點擊螢幕上任何位置選取該處的顏色
 6. 顏色會自動套用到對應的主題設定
 
 ## 注意事項
 
 - 此功能需要現代瀏覽器支援
 - Firefox 瀏覽器目前不支援 EyeDropper API
-- 選取顏色時需要用戶權限確認
-- 顏色變更會立即生效並保存到當前主題
+- 顏色變更會立即生效
 
 ## 故障排除
 
@@ -79,11 +66,9 @@
 - 確認已點擊螢幕選取顏色
 - 檢查 SillyTavern 主題設定是否正常
 
-## 授權條款
-
-AGPLv3 License
 
 ## 版本歷史
 
 
 - v1.0.0 - 初始版本，支援所有主題色彩滴管功能
+
