@@ -1,4 +1,3 @@
-// SillyTavern Theme Color Picker Extension
 console.log('Theme Color Picker Extension: Starting initialization');
 
 jQuery(async () => {
@@ -6,11 +5,11 @@ jQuery(async () => {
     
     console.log('Theme Color Picker Extension: DOM ready');
     
-    // 檢查 EyeDropper API 支援
+    // Check EyeDropper API support
     if (!window.EyeDropper) {
         console.warn('EyeDropper API not supported in this browser');
         if (typeof toastr !== 'undefined') {
-            toastr.warning('此瀏覽器不支援滴管工具 API，請使用 Chrome 或 Edge');
+            toastr.warning('EyeDropper API not supported. Please use Chrome or Edge browser.');
         }
         return;
     }
@@ -18,7 +17,7 @@ jQuery(async () => {
     let isPickingColor = false;
     let activeButton = null;
     
-    // 顏色格式轉換工具
+    // Color format conversion utilities
     const ColorUtils = {
         hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -52,68 +51,22 @@ jQuery(async () => {
         }
     };
     
-    // 更新主題顏色
-    function updateThemeColor(colorElement, newColor) {
-        console.log('Updating theme color:', newColor, 'for element:', colorElement);
-        
-        // 直接更新顏色顯示元素
-        if (colorElement.style) {
-            colorElement.style.backgroundColor = newColor;
-        }
-        
-        // 尋找關聯的隱藏 input 或設定值
-        const colorName = getColorNameFromElement(colorElement);
-        if (colorName) {
-            updateThemeColorBySetting(colorName, newColor);
-        }
-        
-        // 觸發 SillyTavern 設定保存
-        setTimeout(() => {
-            if (typeof saveSettingsDebounced === 'function') {
-                saveSettingsDebounced();
-            } else if (typeof saveSettings === 'function') {
-                saveSettings();
-            }
-            
-            // 強制重新應用主題
-            if (typeof applyTheme === 'function') {
-                applyTheme();
-            }
-            
-            // 觸發自定義事件
-            $(document).trigger('themeColorChanged', [colorName, newColor]);
-        }, 100);
-    }
+    // Color name to CSS variable mapping
+    const colorMappings = {
+        'Main Text': '--SmartThemeMainTextColor',
+        'Italics Text': '--SmartThemeItalicsColor',
+        'Underlined Text': '--SmartThemeUnderlinedColor',
+        'Quote Text': '--SmartThemeQuoteColor',
+        'Text Shadow': '--SmartThemeTextShadowColor',
+        'Chat Background': '--SmartThemeChatBackgroundColor',
+        'UI Background': '--SmartThemeUIBackgroundColor',
+        'UI Border': '--SmartThemeUIBorderColor',
+        'User Message': '--SmartThemeUserMessageColor',
+        'AI Message': '--SmartThemeBotMessageColor'
+    };
     
-    // 從元素獲取顏色名稱
-    function getColorNameFromElement(element) {
-        // 查找父級容器中的文字標籤
-        const container = element.closest('.color-picker-block, .inline-drawer, .user-settings-block');
-        if (!container) return null;
-        
-        // 尋找文字標籤
-        const textNodes = container.querySelectorAll('*');
-        for (let node of textNodes) {
-            const text = node.textContent?.trim();
-            if (text && colorNameMapping[text]) {
-                return text;
-            }
-        }
-        
-        // 從 DOM 結構推斷
-        const allColorElements = container.querySelectorAll('[style*="background-color"]');
-        const index = Array.from(allColorElements).indexOf(element);
-        const colorNames = [
-            'Main Text', 'Italics Text', 'Underlined Text', 'Quote Text',
-            'Text Shadow', 'Chat Background', 'UI Background', 'UI Border',
-            'User Message', 'AI Message'
-        ];
-        
-        return colorNames[index] || null;
-    }
-    
-    // 顏色名稱對應設定
-    const colorNameMapping = {
+    // Setting key mapping for SillyTavern power_user.themes
+    const settingKeyMapping = {
         'Main Text': 'main_text_color',
         'Italics Text': 'italics_text_color', 
         'Underlined Text': 'underlined_text_color',
@@ -126,48 +79,116 @@ jQuery(async () => {
         'AI Message': 'ai_msg_color'
     };
     
-    // 根據設定名稱更新顏色
-    function updateThemeColorBySetting(colorName, newColor) {
-        const settingKey = colorNameMapping[colorName];
-        if (!settingKey) return;
+    // Update theme color and apply changes
+    function updateThemeColor(colorName, newColor) {
+        console.log('Updating theme color:', colorName, 'to:', newColor);
         
-        // 更新全域設定（如果存在）
-        if (typeof power_user !== 'undefined' && power_user.themes) {
-            const currentTheme = power_user.themes[power_user.theme] || {};
-            currentTheme[settingKey] = newColor;
-            power_user.themes[power_user.theme] = currentTheme;
-        }
-        
-        // 更新 CSS 變數
-        const cssVarMap = {
-            'main_text_color': '--SmartThemeMainTextColor',
-            'italics_text_color': '--SmartThemeItalicsColor',
-            'underlined_text_color': '--SmartThemeUnderlinedColor',
-            'quote_text_color': '--SmartThemeQuoteColor',
-            'text_shadow_color': '--SmartThemeTextShadowColor',
-            'chat_bg_color': '--SmartThemeChatBackgroundColor',
-            'ui_bg_color': '--SmartThemeUIBackgroundColor',
-            'ui_border_color': '--SmartThemeUIBorderColor',
-            'user_msg_color': '--SmartThemeUserMessageColor',
-            'ai_msg_color': '--SmartThemeBotMessageColor'
-        };
-        
-        const cssVar = cssVarMap[settingKey];
+        // Update CSS variable directly
+        const cssVar = colorMappings[colorName];
         if (cssVar) {
             document.documentElement.style.setProperty(cssVar, newColor);
             console.log(`Updated CSS variable ${cssVar} to ${newColor}`);
         }
+        
+        // Update SillyTavern theme settings
+        const settingKey = settingKeyMapping[colorName];
+        if (settingKey && typeof power_user !== 'undefined' && power_user.themes) {
+            const currentTheme = power_user.theme || 'default';
+            if (!power_user.themes[currentTheme]) {
+                power_user.themes[currentTheme] = {};
+            }
+            power_user.themes[currentTheme][settingKey] = newColor;
+            
+            console.log(`Updated theme setting ${settingKey} to ${newColor}`);
+        }
+        
+        // Update the visual color display element
+        updateColorDisplay(colorName, newColor);
+        
+        // Trigger SillyTavern settings save
+        setTimeout(() => {
+            if (typeof saveSettingsDebounced === 'function') {
+                saveSettingsDebounced();
+            } else if (typeof saveSettings === 'function') {
+                saveSettings();
+            }
+            
+            // Force theme reapplication
+            if (typeof applyTheme === 'function') {
+                applyTheme();
+            }
+            
+            // Trigger custom event
+            $(document).trigger('themeColorChanged', [colorName, newColor]);
+        }, 100);
     }
     
-    // 創建滴管按鈕
-    function createEyedropperButton(targetElement) {
+    // Update color display element
+    function updateColorDisplay(colorName, newColor) {
+        const colorElements = findColorElementsByName(colorName);
+        colorElements.forEach(element => {
+            element.style.backgroundColor = newColor;
+        });
+    }
+    
+    // Find color display elements by color name
+    function findColorElementsByName(colorName) {
+        const elements = [];
+        
+        // Look for color picker blocks
+        const colorSections = document.querySelectorAll('.color-picker-block, .inline-drawer');
+        
+        colorSections.forEach(section => {
+            // Find the text label
+            const labels = section.querySelectorAll('*');
+            for (let label of labels) {
+                if (label.textContent && label.textContent.trim() === colorName) {
+                    // Find associated color display element
+                    const colorElement = label.parentElement?.querySelector('[style*="background-color"]') ||
+                                       label.nextElementSibling?.querySelector('[style*="background-color"]') ||
+                                       label.querySelector('[style*="background-color"]');
+                    if (colorElement) {
+                        elements.push(colorElement);
+                    }
+                    break;
+                }
+            }
+        });
+        
+        return elements;
+    }
+    
+    // Get color name from element context
+    function getColorNameFromElement(element) {
+        const container = element.closest('.color-picker-block, .inline-drawer, .user-settings-block');
+        if (!container) return null;
+        
+        // Look for text labels in the container
+        const textNodes = container.querySelectorAll('*');
+        for (let node of textNodes) {
+            const text = node.textContent?.trim();
+            if (text && colorMappings[text]) {
+                return text;
+            }
+        }
+        
+        // Fallback: try to determine from DOM structure
+        const allColorElements = container.querySelectorAll('[style*="background-color"]');
+        const index = Array.from(allColorElements).indexOf(element);
+        const colorNames = Object.keys(colorMappings);
+        
+        return colorNames[index] || null;
+    }
+    
+    // Create eyedropper button
+    function createEyedropperButton(targetElement, colorName) {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'eyedropper-btn';
         button.innerHTML = '🎨';
-        button.title = '使用滴管工具選取螢幕顏色';
+        button.title = `Use eyedropper to pick color for ${colorName || 'this element'}`;
         
-        // 按鈕樣式
+        // Button styles
         button.style.cssText = `
             position: absolute !important;
             top: 2px !important;
@@ -188,7 +209,7 @@ jQuery(async () => {
             opacity: 0.7 !important;
         `;
         
-        // 懸停效果
+        // Hover effects
         button.addEventListener('mouseenter', () => {
             if (!isPickingColor) {
                 button.style.opacity = '1';
@@ -203,54 +224,62 @@ jQuery(async () => {
             }
         });
         
-        // 點擊事件
+        // Click event
         button.addEventListener('click', async (e) => {
             e.preventDefault();
             e.stopPropagation();
             
             if (isPickingColor) return;
             
-            await startColorPicking(button, targetElement);
+            const finalColorName = colorName || getColorNameFromElement(targetElement);
+            if (!finalColorName) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Could not determine color type for this element');
+                }
+                return;
+            }
+            
+            await startColorPicking(button, finalColorName);
         });
         
         return button;
     }
     
-    // 開始顏色選取
-    async function startColorPicking(button, targetElement) {
+    // Start color picking process
+    async function startColorPicking(button, colorName) {
         if (isPickingColor) return;
         
         try {
             isPickingColor = true;
             activeButton = button;
             
-            // 更新按鈕狀態
+            // Update button state
             button.style.background = '#ff4444';
             button.style.borderColor = '#ff2222';
             button.innerHTML = '⏳';
-            button.title = '點擊螢幕選取顏色... (ESC 取消)';
+            button.title = 'Click screen to pick color... (ESC to cancel)';
             button.style.opacity = '1';
             
             if (typeof toastr !== 'undefined') {
-                toastr.info('請點擊螢幕選取顏色', '滴管工具已啟動');
+                toastr.info(`Click anywhere on screen to pick color for ${colorName}`, 'Eyedropper Active');
             }
             
-            console.log('Starting eyedropper...');
+            console.log('Starting eyedropper for:', colorName);
             
             const eyeDropper = new EyeDropper();
             const result = await eyeDropper.open();
             
             if (result && result.sRGBHex) {
                 const selectedColor = result.sRGBHex.toLowerCase();
-                console.log('Color selected:', selectedColor);
+                console.log('Color selected:', selectedColor, 'for:', colorName);
                 
-                updateThemeColor(targetElement, selectedColor);
+                updateThemeColor(colorName, selectedColor);
                 
                 if (typeof toastr !== 'undefined') {
-                    toastr.success(`顏色已設定為 ${selectedColor.toUpperCase()}`);
+                    toastr.success(`${colorName} color set to ${selectedColor.toUpperCase()}`);
                 }
                 
-                // 成功狀態
+                // Success state
                 button.style.background = '#28a745';
                 button.innerHTML = '✓';
                 
@@ -265,12 +294,12 @@ jQuery(async () => {
             if (error.name === 'AbortError') {
                 console.log('Color picking cancelled');
                 if (typeof toastr !== 'undefined') {
-                    toastr.info('顏色選取已取消');
+                    toastr.info('Color picking cancelled');
                 }
             } else {
                 console.error('Color picking failed:', error);
                 if (typeof toastr !== 'undefined') {
-                    toastr.error('選色失敗: ' + error.message);
+                    toastr.error('Color picking failed: ' + error.message);
                 }
             }
         } finally {
@@ -283,23 +312,25 @@ jQuery(async () => {
         }
     }
     
-    // 重置按鈕狀態
+    // Reset button state
     function resetButton(button) {
         if (button && button.parentNode) {
             button.style.background = 'rgba(0, 123, 255, 0.8)';
             button.style.borderColor = 'rgba(0, 123, 255, 1)';
             button.innerHTML = '🎨';
-            button.title = '使用滴管工具選取螢幕顏色';
+            button.title = button.title.replace('Click screen to pick color... (ESC to cancel)', 'Use eyedropper to pick color');
             button.style.opacity = '0.7';
             button.style.transform = 'scale(1)';
         }
     }
     
-    // 添加滴管按鈕到顏色元素
+    // Add eyedropper buttons to color elements
     function addEyedropperButtons() {
         console.log('Scanning for SillyTavern color elements...');
         
-        // 尋找主題顏色區塊
+        let buttonsAdded = 0;
+        
+        // Find theme color sections
         const themeColorSections = [
             ...document.querySelectorAll('.color-picker-block'),
             ...document.querySelectorAll('[class*="color-picker"]'),
@@ -307,55 +338,44 @@ jQuery(async () => {
             ...document.querySelectorAll('.user-settings-block')
         ];
         
-        let buttonsAdded = 0;
-        
         themeColorSections.forEach(section => {
-            // 在每個區塊內尋找顏色顯示元素
-            const colorElements = section.querySelectorAll('[style*="background-color"]:not(.eyedropper-btn)');
-            
-            colorElements.forEach(element => {
-                // 跳過已經有按鈕的元素
-                if (element.querySelector('.eyedropper-btn')) return;
-                
-                const computedStyle = window.getComputedStyle(element);
-                const bgColor = computedStyle.backgroundColor;
-                
-                // 跳過透明或無效的背景色
-                if (!bgColor || bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)') return;
-                
-                const rect = element.getBoundingClientRect();
-                // 只處理足夠大的顏色顯示元素
-                if (rect.width >= 30 && rect.height >= 15) {
-                    // 確保元素有相對定位
-                    if (computedStyle.position === 'static') {
-                        element.style.position = 'relative';
+            // Look for each known color type
+            Object.keys(colorMappings).forEach(colorName => {
+                // Find text label
+                const labels = section.querySelectorAll('*');
+                for (let label of labels) {
+                    if (label.textContent && label.textContent.trim() === colorName) {
+                        // Find associated color display element
+                        const colorElement = label.parentElement?.querySelector('[style*="background-color"]:not(.eyedropper-btn)') ||
+                                           label.nextElementSibling?.querySelector('[style*="background-color"]:not(.eyedropper-btn)') ||
+                                           section.querySelector(`[style*="background-color"]:not(.eyedropper-btn):nth-of-type(${Object.keys(colorMappings).indexOf(colorName) + 1})`);
+                        
+                        if (colorElement && !colorElement.querySelector('.eyedropper-btn')) {
+                            const computedStyle = window.getComputedStyle(colorElement);
+                            const bgColor = computedStyle.backgroundColor;
+                            
+                            // Skip transparent or invalid background colors
+                            if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
+                                const rect = colorElement.getBoundingClientRect();
+                                // Only process sufficiently large color display elements
+                                if (rect.width >= 20 && rect.height >= 15) {
+                                    // Ensure element has relative positioning
+                                    if (computedStyle.position === 'static') {
+                                        colorElement.style.position = 'relative';
+                                    }
+                                    
+                                    const button = createEyedropperButton(colorElement, colorName);
+                                    colorElement.appendChild(button);
+                                    buttonsAdded++;
+                                    
+                                    console.log(`Added eyedropper button for ${colorName}`);
+                                }
+                            }
+                        }
+                        break;
                     }
-                    
-                    const button = createEyedropperButton(element);
-                    element.appendChild(button);
-                    buttonsAdded++;
-                    
-                    console.log('Added eyedropper button to color element');
                 }
             });
-        });
-        
-        // 也檢查直接的顏色元素
-        const directColorElements = document.querySelectorAll('.black.box, span[style*="background-color"]');
-        directColorElements.forEach(element => {
-            if (element.querySelector('.eyedropper-btn')) return;
-            
-            const rect = element.getBoundingClientRect();
-            if (rect.width >= 20 && rect.height >= 15) {
-                const computedStyle = window.getComputedStyle(element);
-                if (computedStyle.position === 'static') {
-                    element.style.position = 'relative';
-                }
-                
-                const button = createEyedropperButton(element);
-                element.appendChild(button);
-                buttonsAdded++;
-            }
         });
         
         if (buttonsAdded > 0) {
@@ -365,16 +385,16 @@ jQuery(async () => {
         return buttonsAdded;
     }
     
-    // 初始化
+    // Initialize the extension
     function initialize() {
         console.log('Initializing SillyTavern Theme Color Picker...');
         
-        // 延遲執行，確保 DOM 完全載入
+        // Delayed execution to ensure DOM is fully loaded
         setTimeout(() => {
             addEyedropperButtons();
         }, 2000);
         
-        // DOM 變化監聽
+        // DOM change observer
         const observer = new MutationObserver((mutations) => {
             let shouldRescan = false;
             
@@ -420,18 +440,18 @@ jQuery(async () => {
             attributeFilter: ['style']
         });
         
-        // 監聽 SillyTavern 事件
+        // Listen for SillyTavern events
         $(document).on('click', '.drawer-toggle, .inline_ctrls', function() {
             setTimeout(addEyedropperButtons, 300);
         });
         
-        // 定期檢查
+        // Periodic check
         setInterval(addEyedropperButtons, 10000);
         
         console.log('SillyTavern Theme Color Picker initialized');
     }
     
-    // ESC 鍵取消
+    // ESC key to cancel
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && isPickingColor && activeButton) {
             console.log('Color picking cancelled by ESC');
@@ -441,6 +461,6 @@ jQuery(async () => {
         }
     });
     
-    // 開始初始化
+    // Start initialization
     initialize();
 });
