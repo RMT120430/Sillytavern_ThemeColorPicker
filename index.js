@@ -93,9 +93,18 @@ jQuery(async () => {
                 colorPicker.color = rgbaColor;
             }
             
-            // Create and dispatch proper input/change events
-            const inputEvent = new Event('input', { bubbles: true });
-            const changeEvent = new Event('change', { bubbles: true });
+            // Create and dispatch proper events with color data
+            const eventData = {
+                detail: {
+                    rgba: rgbaColor,
+                    hex: newColor,
+                    color: rgbaColor
+                },
+                bubbles: true
+            };
+            
+            const inputEvent = new CustomEvent('input', eventData);
+            const changeEvent = new CustomEvent('change', eventData);
             
             colorPicker.dispatchEvent(inputEvent);
             colorPicker.dispatchEvent(changeEvent);
