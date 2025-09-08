@@ -85,50 +85,33 @@ jQuery(async () => {
         // Find the toolcool-color-picker element
         const colorPicker = document.getElementById(colorPickerId);
         if (colorPicker) {
-            // Update the color picker
-            colorPicker.color = rgbaColor;
+            // Update the color picker value directly
+            colorPicker.setAttribute('color', rgbaColor);
+            if (colorPicker.setColor && typeof colorPicker.setColor === 'function') {
+                colorPicker.setColor(rgbaColor);
+            } else {
+                colorPicker.color = rgbaColor;
+            }
             
-            // Trigger change event to update SillyTavern
-            const changeEvent = new CustomEvent('change', {
-                detail: { color: rgbaColor }
-            });
+            // Create and dispatch proper input/change events
+            const inputEvent = new Event('input', { bubbles: true });
+            const changeEvent = new Event('change', { bubbles: true });
+            
+            colorPicker.dispatchEvent(inputEvent);
             colorPicker.dispatchEvent(changeEvent);
             
             console.log(`Updated color picker ${colorPickerId} to ${rgbaColor}`);
         }
         
-        // Update CSS variable directly
-        const cssVar = colorPickerMappings[colorPickerId];
-        if (cssVar) {
-            document.documentElement.style.setProperty(cssVar, rgbaColor);
-            console.log(`Updated CSS variable ${cssVar} to ${rgbaColor}`);
-        }
+        // Don't directly manipulate CSS variables or power_user settings
+        // Let SillyTavern's built-in handlers manage this
         
-        // Update SillyTavern theme settings
-        const settingKey = settingKeyMapping[colorPickerId];
-        if (settingKey && typeof power_user !== 'undefined' && power_user.themes) {
-            const currentTheme = power_user.theme || 'default';
-            if (!power_user.themes[currentTheme]) {
-                power_user.themes[currentTheme] = {};
-            }
-            power_user.themes[currentTheme][settingKey] = rgbaColor;
-            
-            console.log(`Updated theme setting ${settingKey} to ${rgbaColor}`);
-        }
-        
-        // Trigger SillyTavern settings save
+        // Force a small delay to ensure the color picker processes the change
         setTimeout(() => {
             if (typeof saveSettingsDebounced === 'function') {
                 saveSettingsDebounced();
-            } else if (typeof saveSettings === 'function') {
-                saveSettings();
             }
-            
-            // Force theme reapplication
-            if (typeof applyTheme === 'function') {
-                applyTheme();
-            }
-        }, 100);
+        }, 200);
     }
     
     // Extract alpha value from current color
