@@ -389,12 +389,12 @@ jQuery(async () => {
     function initialize() {
         console.log('Initializing SillyTavern Theme Color Picker...');
         
-        // Delayed execution to ensure DOM is fully loaded
-        setTimeout(() => {
-            addEyedropperButtons();
-        }, 2000);
+        // Multiple initialization attempts
+        setTimeout(() => addEyedropperButtons(), 1000);  // First attempt
+        setTimeout(() => addEyedropperButtons(), 3000);  // Second attempt
+        setTimeout(() => addEyedropperButtons(), 5000);  // Third attempt
         
-        // DOM change observer
+        // DOM change observer with more comprehensive monitoring
         const observer = new MutationObserver((mutations) => {
             let shouldRescan = false;
             
@@ -406,14 +406,17 @@ jQuery(async () => {
                                 node.matches('.color-picker-block') ||
                                 node.matches('.inline-drawer') ||
                                 node.matches('[style*="background-color"]') ||
-                                node.matches('.user-settings-block')
+                                node.matches('.user-settings-block') ||
+                                node.matches('.drawer-content') ||
+                                node.matches('#ui-theme-block')
                             )) {
                                 shouldRescan = true;
                             }
                             
                             if (node.querySelector && (
                                 node.querySelector('.color-picker-block') ||
-                                node.querySelector('[style*="background-color"]')
+                                node.querySelector('[style*="background-color"]') ||
+                                node.querySelector('.inline-drawer')
                             )) {
                                 shouldRescan = true;
                             }
@@ -437,18 +440,29 @@ jQuery(async () => {
             childList: true,
             subtree: true,
             attributes: true,
-            attributeFilter: ['style']
+            attributeFilter: ['style', 'class']
         });
         
-        // Listen for SillyTavern events
-        $(document).on('click', '.drawer-toggle, .inline_ctrls', function() {
+        // Listen for SillyTavern events more comprehensively
+        $(document).on('click', '.drawer-toggle, .inline_ctrls, .fa-palette, .menu_button', function() {
             setTimeout(addEyedropperButtons, 300);
         });
         
-        // Periodic check
-        setInterval(addEyedropperButtons, 10000);
+        // Listen for settings panel opening
+        $(document).on('click', '[id*="theme"], [class*="theme"], .user_stats_button', function() {
+            setTimeout(addEyedropperButtons, 500);
+        });
         
-        console.log('SillyTavern Theme Color Picker initialized');
+        // More frequent checks initially
+        const intervals = [2000, 5000, 10000, 15000];
+        intervals.forEach(delay => {
+            setTimeout(addEyedropperButtons, delay);
+        });
+        
+        // Regular periodic check
+        setInterval(addEyedropperButtons, 30000);
+        
+        console.log('SillyTavern Theme Color Picker initialized with enhanced monitoring');
     }
     
     // ESC key to cancel
