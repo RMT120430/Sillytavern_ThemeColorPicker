@@ -1,161 +1,143 @@
-/* SillyTavern Theme Color Picker Extension - CSS */
+/* SillyTavern Theme Color Eyedropper Extension - CSS */
 
-/* 滴管按鈕基本樣式 */
+/* Eyedropper button base styles */
 .eyedropper-btn {
-    position: absolute !important;
-    top: 2px !important;
-    right: 2px !important;
-    width: 20px !important;
-    height: 20px !important;
-    background: rgba(0, 123, 255, 0.8) !important;
-    color: white !important;
-    border: 1px solid rgba(0, 123, 255, 1) !important;
-    border-radius: 3px !important;
-    cursor: pointer !important;
-    font-size: 10px !important;
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    z-index: 1000 !important;
-    transition: all 0.2s ease !important;
-    opacity: 0.7 !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    margin: 0 8px 8px 0 !important;
     padding: 0 !important;
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    color: white !important;
+    border: 2px solid #0056b3 !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3) !important;
+    opacity: 0.9 !important;
+    position: relative !important;
+    overflow: hidden !important;
 }
 
-/* 懸停效果 */
+/* Hover effects */
 .eyedropper-btn:hover {
     opacity: 1 !important;
-    transform: scale(1.1) !important;
-    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.4) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4) !important;
+    background: linear-gradient(135deg, #0056b3, #004085) !important;
 }
 
-/* 活動狀態 */
+/* Active state */
 .eyedropper-btn:active {
-    transform: scale(0.95) !important;
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3) !important;
 }
 
-/* 焦點狀態 */
+/* Focus state */
 .eyedropper-btn:focus {
-    outline: 2px solid rgba(0, 123, 255, 0.6) !important;
-    outline-offset: 1px !important;
+    outline: 3px solid rgba(0, 123, 255, 0.4) !important;
+    outline-offset: 2px !important;
 }
 
-/* 選色中狀態 */
+/* Picking state */
 .eyedropper-btn.picking {
-    background: #ff4444 !important;
-    border-color: #ff2222 !important;
-    opacity: 1 !important;
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    border-color: #c82333 !important;
     animation: pickingPulse 1.5s infinite ease-in-out !important;
+    opacity: 1 !important;
 }
 
-/* 選色動畫 */
+/* Picking animation */
 @keyframes pickingPulse {
     0% { 
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+        transform: scale(1) translateY(0);
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
     }
     50% { 
-        transform: scale(1.05);
-        box-shadow: 0 0 0 6px rgba(255, 68, 68, 0);
+        transform: scale(1.05) translateY(-1px);
+        box-shadow: 0 0 0 8px rgba(220, 53, 69, 0);
     }
     100% { 
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+        transform: scale(1) translateY(0);
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
     }
 }
 
-/* 成功狀態 */
+/* Success state */
 .eyedropper-btn.success {
-    background: #28a745 !important;
-    border-color: #20a03a !important;
+    background: linear-gradient(135deg, #28a745, #1e7e34) !important;
+    border-color: #1e7e34 !important;
     transform: scale(1.1) !important;
+    animation: successPulse 0.6s ease-out !important;
 }
 
-/* 確保按鈕在 SillyTavern 顏色元素中的定位 */
-.color-picker-block .eyedropper-btn,
-.inline-drawer .eyedropper-btn,
-.user-settings-block .eyedropper-btn {
-    position: absolute !important;
-    top: 2px !important;
-    right: 2px !important;
-}
-
-/* 特殊情況：小型顏色方塊 */
-.black.box .eyedropper-btn,
-span[style*="background-color"] .eyedropper-btn {
-    width: 16px !important;
-    height: 16px !important;
-    font-size: 8px !important;
-    top: 1px !important;
-    right: 1px !important;
-}
-
-/* 確保父元素有相對定位 */
-.color-picker-block [style*="background-color"],
-.inline-drawer [style*="background-color"],
-.user-settings-block [style*="background-color"] {
-    position: relative !important;
-}
-
-/* 響應式設計 */
-@media (max-width: 768px) {
-    .eyedropper-btn {
-        width: 18px !important;
-        height: 18px !important;
-        font-size: 9px !important;
+/* Success animation */
+@keyframes successPulse {
+    0% { 
+        transform: scale(1);
     }
-    
-    .black.box .eyedropper-btn,
-    span[style*="background-color"] .eyedropper-btn {
-        width: 14px !important;
-        height: 14px !important;
-        font-size: 7px !important;
+    50% { 
+        transform: scale(1.15);
+    }
+    100% { 
+        transform: scale(1.1);
     }
 }
 
-/* 暗色主題適配 */
+/* Ensure proper layout within color picker block */
+#color-picker-block .eyedropper-btn {
+    flex-shrink: 0 !important;
+    align-self: flex-start !important;
+}
+
+/* Dark theme adaptation */
 body.dark .eyedropper-btn,
 [data-theme="dark"] .eyedropper-btn {
-    background: rgba(70, 130, 180, 0.8) !important;
-    border-color: rgba(70, 130, 180, 1) !important;
+    background: linear-gradient(135deg, #4682b4, #2f5f7f) !important;
+    border-color: #2f5f7f !important;
+    box-shadow: 0 2px 4px rgba(70, 130, 180, 0.3) !important;
 }
 
 body.dark .eyedropper-btn:hover,
 [data-theme="dark"] .eyedropper-btn:hover {
-    background: rgba(70, 130, 180, 1) !important;
-    box-shadow: 0 2px 6px rgba(70, 130, 180, 0.4) !important;
+    background: linear-gradient(135deg, #2f5f7f, #1e4055) !important;
+    box-shadow: 0 4px 8px rgba(70, 130, 180, 0.4) !important;
 }
 
-/* 亮色主題適配 */
+/* Light theme specific styles */
 body.light .eyedropper-btn,
 [data-theme="light"] .eyedropper-btn {
-    background: rgba(0, 123, 255, 0.9) !important;
-    border-color: rgba(0, 123, 255, 1) !important;
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    border-color: #0056b3 !important;
     color: white !important;
 }
 
-/* 確保按鈕始終可見 */
-.eyedropper-btn {
-    visibility: visible !important;
-    display: flex !important;
-    opacity: 0.7 !important;
+/* Responsive design */
+@media (max-width: 768px) {
+    .eyedropper-btn {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 14px !important;
+        margin: 0 6px 6px 0 !important;
+    }
 }
 
-.eyedropper-btn:hover {
-    opacity: 1 !important;
+@media (max-width: 480px) {
+    .eyedropper-btn {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 12px !important;
+        margin: 0 4px 4px 0 !important;
+    }
 }
 
-/* 防止被其他元素遮擋 */
-.eyedropper-btn {
-    z-index: 1000 !important;
-}
-
-/* 高對比度模式支援 */
+/* High contrast mode support */
 @media (prefers-contrast: high) {
     .eyedropper-btn {
-        border-width: 2px !important;
+        border-width: 3px !important;
         background: #0066cc !important;
         border-color: #004499 !important;
         opacity: 1 !important;
@@ -164,12 +146,30 @@ body.light .eyedropper-btn,
     .eyedropper-btn:hover {
         background: #004499 !important;
     }
+    
+    .eyedropper-btn.picking {
+        background: #cc0000 !important;
+        border-color: #990000 !important;
+    }
+    
+    .eyedropper-btn.success {
+        background: #009900 !important;
+        border-color: #006600 !important;
+    }
 }
 
-/* 減少動畫偏好 */
+/* Reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
     .eyedropper-btn {
-        transition: opacity 0.1s ease !important;
+        transition: opacity 0.2s ease !important;
+    }
+    
+    .eyedropper-btn:hover {
+        transform: none !important;
+    }
+    
+    .eyedropper-btn:active {
+        transform: none !important;
     }
     
     @keyframes pickingPulse {
@@ -180,33 +180,70 @@ body.light .eyedropper-btn,
             transform: scale(1.02);
         }
     }
+    
+    @keyframes successPulse {
+        0%, 100% { 
+            transform: scale(1);
+        }
+        50% { 
+            transform: scale(1.02);
+        }
+    }
 }
 
-/* 確保在所有 SillyTavern 佈局中正常工作 */
+/* Ensure button doesn't interfere with layout */
 .eyedropper-btn {
-    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
     white-space: nowrap !important;
-    overflow: visible !important;
-    max-width: none !important;
-    min-width: auto !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
 }
 
-/* 特殊容器適配 */
-.drawer-content .eyedropper-btn,
-.popup .eyedropper-btn {
-    position: absolute !important;
-    z-index: 10001 !important;
+/* Custom tooltip styling */
+.eyedropper-btn[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1001;
+    pointer-events: none;
 }
 
-/* 確保不會影響原有佈局 */
-[style*="background-color"]:has(.eyedropper-btn) {
-    position: relative !important;
+/* Ensure proper spacing in flex containers */
+.flex-container .eyedropper-btn + .flex-container {
+    margin-left: 0 !important;
 }
 
-/* 針對 SillyTavern 特殊類名的適配 */
-.inline_ctrls .eyedropper-btn,
-.range-block .eyedropper-btn {
-    position: absolute !important;
-    top: 2px !important;
-    right: 2px !important;
+/* Special handling for inline drawer content */
+.inline-drawer-content .eyedropper-btn {
+    z-index: 100 !important;
+}
+
+/* Accessibility improvements */
+.eyedropper-btn:focus-visible {
+    outline: 3px solid #ffbf00 !important;
+    outline-offset: 2px !important;
+}
+
+/* Animation for button appearance */
+@keyframes buttonAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 0.9;
+        transform: scale(1);
+    }
+}
+
+.eyedropper-btn {
+    animation: buttonAppear 0.3s ease-out !important;
 }
