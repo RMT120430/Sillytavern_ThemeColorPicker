@@ -17,6 +17,21 @@ jQuery(async () => {
     let isPickingColor = false;
     let activeButton = null;
     
+    // SVG Icons
+    const SVG_ICONS = {
+        eyedropper: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m2 22 1-1h3l9-9"/>
+            <path d="M3 21v-3l9-9"/>
+            <path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 0 1 0-3z"/>
+        </svg>`,
+        loading: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 11-6.219-8.56"/>
+        </svg>`,
+        success: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20,6 9,17 4,12"/>
+        </svg>`
+    };
+    
     // Color picker ID to CSS variable mapping
     const colorPickerMappings = {
         'main-text-color-picker': '--SmartThemeMainTextColor',
@@ -145,8 +160,8 @@ jQuery(async () => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'eyedropper-btn';
-        button.innerHTML = '🎨';
-        button.title = `使用吸色器選擇 ${colorName} 的顏色`;
+        button.innerHTML = SVG_ICONS.eyedropper;
+        button.title = `Use eyedropper to select ${colorName} color`;
         button.setAttribute('data-color-picker-id', colorPickerId);
         
         // Button click event
@@ -175,11 +190,11 @@ jQuery(async () => {
             
             // Update button state
             button.classList.add('picking');
-            button.innerHTML = '⏳';
-            button.title = '點擊螢幕上的任意位置來選取顏色... (按 ESC 取消)';
+            button.innerHTML = SVG_ICONS.loading;
+            button.title = 'Click anywhere on screen to pick color... (Press ESC to cancel)';
             
             if (typeof toastr !== 'undefined') {
-                toastr.info(`點擊螢幕上的任意位置來選取 ${colorName} 的顏色`, '吸色器已啟動');
+                toastr.info(`Click anywhere on screen to pick ${colorName} color`, 'Eyedropper Active');
             }
             
             console.log('Starting eyedropper for:', colorPickerId);
@@ -194,13 +209,13 @@ jQuery(async () => {
                 updateThemeColor(colorPickerId, selectedColor, currentAlpha);
                 
                 if (typeof toastr !== 'undefined') {
-                    toastr.success(`${colorName} 顏色已設定為 ${selectedColor.toUpperCase()}`);
+                    toastr.success(`${colorName} color set to ${selectedColor.toUpperCase()}`);
                 }
                 
                 // Success state
                 button.classList.remove('picking');
                 button.classList.add('success');
-                button.innerHTML = '✓';
+                button.innerHTML = SVG_ICONS.success;
                 
                 setTimeout(() => {
                     resetButton(button);
@@ -211,12 +226,12 @@ jQuery(async () => {
             if (error.name === 'AbortError') {
                 console.log('Color picking cancelled');
                 if (typeof toastr !== 'undefined') {
-                    toastr.info('顏色選取已取消');
+                    toastr.info('Color picking cancelled');
                 }
             } else {
                 console.error('Color picking failed:', error);
                 if (typeof toastr !== 'undefined') {
-                    toastr.error('顏色選取失敗: ' + error.message);
+                    toastr.error('Color picking failed: ' + error.message);
                 }
             }
         } finally {
@@ -233,11 +248,11 @@ jQuery(async () => {
     function resetButton(button) {
         if (button && button.parentNode) {
             button.classList.remove('picking', 'success');
-            button.innerHTML = '🎨';
+            button.innerHTML = SVG_ICONS.eyedropper;
             const colorPickerId = button.getAttribute('data-color-picker-id');
             const flexContainer = button.nextElementSibling;
             const colorName = flexContainer?.querySelector('span[data-i18n]')?.textContent || colorPickerId;
-            button.title = `使用吸色器選擇 ${colorName} 的顏色`;
+            button.title = `Use eyedropper to select ${colorName} color`;
         }
     }
     
