@@ -1,11 +1,14 @@
 {
-  "display_name": "Sillytavern_ThemeColorPicker",
-  "loading_order": 10,
+  "display_name": "Theme Color Eyedropper",
+  "loading_order": 1,
   "requires": [],
-  "optional": [],
+  "optional": [
+  ],
+  "generate_interceptor": "Sillytavern_ThemeColorPicker",
   "js": "index.js",
   "css": "style.css",
   "author": "RMT120430",
   "version": "1.0.0",
   "homePage": "https://github.com/RMT120430/Sillytavern_ThemeColorPicker"
 }
+
