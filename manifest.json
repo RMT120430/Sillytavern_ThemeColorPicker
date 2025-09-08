@@ -2,8 +2,7 @@
   "display_name": "Theme Color Picker",
   "loading_order": 1,
   "requires": [],
-  "optional": [
-  ],
+  "optional": [],
   "generate_interceptor": "Sillytavern_ThemeColorPicker",
   "js": "index.js",
   "css": "style.css",
