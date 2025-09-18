@@ -24,7 +24,7 @@ Then your Sillytavern definitely needs this little tool! The Magic Eyedropper! �
 
 - Chrome 95+ or Microsoft Edge 95+.
 - A modern browser that supports the EyeDropper API.
-- SillyTavern 1.0.0+
+- SillyTavern 1.13.2+
 
 ## 🔹Installation
 
@@ -100,7 +100,7 @@ Then your Sillytavern definitely needs this little tool! The Magic Eyedropper! �
 
 - Chrome 95+ 或 Microsoft Edge 95+
 - 支援 EyeDropper API 的現代瀏覽器
-- SillyTavern 1.0.0+
+- SillyTavern 1.13.2+
 
 ## 🔹安裝方法
 
@@ -148,6 +148,7 @@ Then your Sillytavern definitely needs this little tool! The Magic Eyedropper! �
 ## 🔹版本歷史
 
 - v1.0.0 - 初始版本
+
 
 
 
