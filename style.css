@@ -201,7 +201,7 @@
 .inline-drawer-content .eyedropper-btn,
 .inline-drawer-content .color-picker-btn,
 .inline-drawer-content .theme-btn {
-    z-index: 100 !important;
+    z-index: 49 !important;
 }
 
 /* Ensure buttons don't interfere with layout */
@@ -329,3 +329,4 @@
         animation: none !important;
     }
 }
+
